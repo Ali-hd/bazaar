@@ -1,0 +1,28 @@
+
+
+.login-form {
+    max-width: 600px;
+    margin: 10% auto;
+  }
+  .login-form-forgot {
+    float: right;
+  }
+  .ant-col-rtl .login-form-forgot {
+    float: left;
+  }
+  .login-form-button {
+    width: 100%;
+  }
+
+  @media(max-width: 700px){
+    .login-form {
+        max-width: 300px;
+        margin: 10% auto;
+      }
+  }
+
+.login-input{
+  svg{
+    vertical-align: 0;
+  }
+}

@@ -1,0 +1,55 @@
+
+.title {
+    font-size: large;
+    color: red($color: #000000);
+}
+
+.searchInput{
+    width: 400;
+    margin-top: 40px;
+    // border-radius: 10px;
+}
+
+.all-posts-div{
+    margin: 0 auto;
+    max-width: 1440px;
+}
+
+.post-box{
+background-color: gray;
+border-radius: 3px;
+height: 210px;
+}
+
+.image-box{
+    
+}
+
+.post-box-image{
+    border-radius: 3px;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.title-box{
+   padding-left: 28px;
+   padding-bottom: 5px;
+   padding-top: 2px;
+}
+
+.main-title-box{
+    
+}
+
+.main-subTitle-box{
+
+}
+
+.post-profile-icon{
+    // border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    padding-right: 2px;
+}
