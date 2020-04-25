@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Spin } from 'antd';
-import style from './style.scss'
+import './style.scss'
 
 class Loader extends Component {
     render() {

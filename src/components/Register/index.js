@@ -1,17 +1,9 @@
-import React, { Component } from 'react'
-import {
-    Form,
-    Input,
-    Tooltip,
-    Cascader,
-    Select,
-    Row,
-    Col,
-    Checkbox,
-    Button,
-    AutoComplete,
-  } from 'antd';
-  import { QuestionCircleOutlined } from '@ant-design/icons';
+import React, { useContext, useEffect, useState } from 'react'
+import { StoreContext } from '../../store/store'
+import { Form,Input,Tooltip,Cascader,Select,Row,Col,Checkbox,Button,AutoComplete} from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { withRouter, Link, Redirect } from 'react-router-dom';
+import './style.scss'
   
   const { Option } = Select;
   const AutoCompleteOption = AutoComplete.Option;
@@ -50,64 +42,83 @@ import {
       ],
     },
   ];
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 8,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 16,
-      },
-    },
-  };
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0,
-      },
-      sm: {
-        span: 16,
-        offset: 8,
-      },
-    },
-  };
 
-export default class index extends Component {
-    render() {
-        return (
-            <div>
-                <Form
+  const prefixSelector = (
+    <Form.Item name="prefix" noStyle>
+      <Select
+        style={{
+          width: 80,
+        }}
+      >
+        <Option value="966">+966</Option>
+        <Option value="967">+967</Option>
+      </Select>
+    </Form.Item>
+  );
+
+  const RegisterPage = (props) => {
+    const { state, actions } = useContext(StoreContext)
+          
+    // const [error, setError] = useState(state.error)
+ 
+    const onFinish = values => {
+       actions.registerUser(values)
+       console.log('Received values of form: ', values);
+    };
+ 
+    // const handleClose = () => {
+    //    actions.userActions({type: 'alert close'})
+    // }
+ 
+    return (
+       <div>
+         {state.status == "registered" && <Redirect to="/login"/>}
+          <Form className="register-form"
                 style={{maxWidth:'700px', margin: '5% auto', paddingLeft:'20px', paddingRight:'20px'}}
-                    {...formItemLayout}
+                    layout={'vertical'}
                     // form={form}
                     name="register"
-                    // onFinish={onFinish}
+                    onFinish={onFinish}
                     initialValues={{
                         residence: ['zhejiang', 'hangzhou', 'xihu'],
-                        prefix: '86',
+                        prefix: '966',
                     }}
                     scrollToFirstError
                     >
+
+                    <Form.Item
+                        name="username"
+                        hasFeedback
+                        label={
+                        <span>
+                            Username&nbsp;
+                            <Tooltip title="This name will be visible to everyone!">
+                            <QuestionCircleOutlined />
+                            </Tooltip>
+                        </span>
+                        }
+                        rules={[
+                        {
+                            required: true,
+                            message: 'Please enter your username!',
+                            whitespace: true,
+                        },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+
                     <Form.Item
                         name="email"
                         label="E-mail"
                         rules={[
                         {
                             type: 'email',
-                            message: 'The input is not valid E-mail!',
+                            message: 'This is not a valid E-mail!',
                         },
                         {
                             required: true,
-                            message: 'Please input your E-mail!',
+                            message: 'Please enter your E-mail!',
                         },
                         ]}
                     >
@@ -120,7 +131,7 @@ export default class index extends Component {
                         rules={[
                         {
                             required: true,
-                            message: 'Please input your password!',
+                            message: 'Please enter your password!',
                         },
                         ]}
                         hasFeedback
@@ -152,28 +163,7 @@ export default class index extends Component {
                         <Input.Password />
                     </Form.Item>
 
-                    <Form.Item
-                        name="nickname"
-                        label={
-                        <span>
-                            Nickname&nbsp;
-                            <Tooltip title="What do you want others to call you?">
-                            <QuestionCircleOutlined />
-                            </Tooltip>
-                        </span>
-                        }
-                        rules={[
-                        {
-                            required: true,
-                            message: 'Please input your nickname!',
-                            whitespace: true,
-                        },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item
+                    {/* <Form.Item
                         name="residence"
                         label="Habitual Residence"
                         rules={[
@@ -185,42 +175,27 @@ export default class index extends Component {
                         ]}
                     >
                         <Cascader options={residences} />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
-                        name="phone"
+                        name="phoneNumber"
                         label="Phone Number"
                         rules={[
                         {
                             required: true,
-                            message: 'Please input your phone number!',
+                            message: 'Please enter your phone number!',
                         },
                         ]}
                     >
                         <Input
-                        // addonBefore={prefixSelector}
+                        addonBefore={prefixSelector}
                         style={{
                             width: '100%',
                         }}
                         />
                     </Form.Item>
 
-                    <Form.Item
-                        name="website"
-                        label="Website"
-                        rules={[
-                        {
-                            required: true,
-                            message: 'Please input website!',
-                        },
-                        ]}
-                    >
-                        {/* <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder="website"> */}
-                        <Input />
-                        {/* </AutoComplete> */}
-                    </Form.Item>
-
-                    <Form.Item label="Captcha" extra="We must make sure that your are a human.">
+                    {/* <Form.Item label="Captcha" extra="We must make sure that your are a human.">
                         <Row gutter={8}>
                         <Col span={12}>
                             <Form.Item
@@ -240,7 +215,7 @@ export default class index extends Component {
                             <Button>Get captcha</Button>
                         </Col>
                         </Row>
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                         name="agreement"
@@ -251,19 +226,19 @@ export default class index extends Component {
                             value ? Promise.resolve() : Promise.reject('Should accept agreement'),
                         },
                         ]}
-                        {...tailFormItemLayout}
                     >
                         <Checkbox>
                         I have read the <a href="">agreement</a>
                         </Checkbox>
                     </Form.Item>
-                    <Form.Item {...tailFormItemLayout}>
+                    <Form.Item>
                         <Button type="primary" htmlType="submit">
                         Register
                         </Button>
                     </Form.Item>
                     </Form>
-            </div>
-        )
-    }
-}
+       </div>
+    )
+ }
+export default withRouter(RegisterPage)
+
