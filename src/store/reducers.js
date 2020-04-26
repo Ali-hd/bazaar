@@ -12,6 +12,8 @@ const initialState = {
     alert: null,
     loadingPosts: false,
     loadingUserPage: false,
+    singlePost: null,
+    post: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -31,12 +33,27 @@ const reducer = (state = initialState, action) => {
             console.log(action.payload)
             return {...state, loading: false, error: true, alert: true}
         case type.GET_POSTS_SUCCESS:
-            return {...state, ...action.payload, loadingPosts: false}
+            const posts = {posts: action.payload.results}
+            return {...state, ...posts, loadingPosts: false}
         case type.SELL_POST_SUCCESS:
             return {...state, ...action.payload, loading: false}
         case type.GET_USER:
             console.log('get user reducer',action.payload)
             return {...state, ...action.payload, loadingUserPage: false}
+        case type.GET_SINGLE_POST:
+            action.func(action.payload.post.comments)
+            console.log(action)
+            return{...state,...action.payload}
+        case type.POST_COMMENT:
+            action.func(action.payload)
+            return {...state, ...action.payload}
+        case type.LIKE_POST:
+            console.log(action.payload)
+            let post = state.post
+            if(action.payload.msg === "liked"){
+                post.likes = post.likes + 1
+            }else{ post.likes = post.likes - 1}
+            return {...state, ...post }
         default:
             return state
     }

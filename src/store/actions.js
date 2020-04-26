@@ -40,5 +40,16 @@ export const useActions = (state, dispatch) => ({
             if (err) {  dispatch({type: types.SET_STATE, payload: {session: false, decoded: decoded}})  }
             else {  dispatch({type: types.SET_STATE, payload: {session: true, decoded: decoded}})  }
         });
+    },
+    getSinglePost: data => {
+        console.log(data)
+        dispatch({type: types.GET_SINGLE_POST, payload: data})
+
+    },
+    postComment: data => {
+        dispatch({type: types.POST_COMMENT, payload: data})
+    },
+    likePost: data => {
+        dispatch({type: types.LIKE_POST, payload: data})
     }
 })

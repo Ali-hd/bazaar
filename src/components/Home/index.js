@@ -89,9 +89,9 @@ const Home = () => {
             return <div key={post._id} className="col-md-4 pt-4 col-lg-3 col-sm-6">
                 <div className="post-box">
                     <div className="image-box">
-                        <a>
+                        <Link to={`/post/${post._id}`}>
                             <img className="post-box-image" alt="post img" onError={(e)=>{e.target.onerror = null; e.target.src="https://i.imgur.com/lpm3KS3.png"}} src={post.images[0]} />
-                        </a>
+                        </Link>
                     </div>
                     <div className="row pt-1">
                         <div className="title-box col-8">

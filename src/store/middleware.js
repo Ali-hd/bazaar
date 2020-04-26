@@ -59,6 +59,35 @@ export const applyMiddleware = dispatch => action => {
                 type: types.ERROR,
                 payload: err.response.data
             })) 
+        case types.GET_SINGLE_POST:
+            return axios.get(`http://127.0.0.1:5000/post/${action.payload.postId}`)
+            .then(res=>dispatch({
+                type: types.GET_SINGLE_POST,
+                payload: res.data,
+                func: action.payload.func}))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            })) 
+        case types.POST_COMMENT:
+            return axios.post(`http://127.0.0.1:5000/post/${action.payload.comment.postId}/comment`, action.payload.comment, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.POST_COMMENT,
+                payload: action.payload.comment,
+                func: action.payload.func }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            })) 
+        case types.LIKE_POST:
+            return axios.post(`http://127.0.0.1:5000/post/${action.payload}/like`,action.payload, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.LIKE_POST,
+                payload: res.data }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            })) 
         default: dispatch(action)
     }
 }

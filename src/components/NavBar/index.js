@@ -68,6 +68,15 @@ const NavBar = ({ history }) => {
           <div className="leftMenu">
             {LeftMenu()}
           </div>
+          {/* <div>
+          <Search
+            className="searchInput"
+            placeholder="input search text"
+            enterButton="search"
+            size="large"
+            onSearch={value => console.log(value)}
+        />
+          </div> */}
           <div className="rightMenu">
           {state.session ?
               <Menu mode="horizontal">
