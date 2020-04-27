@@ -87,3 +87,12 @@
     // }
     
   }
+
+  .bid-elem{
+      margin-bottom: 3px;
+      display: inline;
+      &:hover {
+        font-weight: 700;
+        cursor: pointer;
+      }
+  }

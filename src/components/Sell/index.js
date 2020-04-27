@@ -3,6 +3,7 @@ import { StoreContext } from '../../store/store'
 import { withRouter, Link, Redirect } from 'react-router-dom';
 import { Upload, message, Divider, Input, Form, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
+import API_URL from '../../config'
 import './style.scss'
 const { Dragger } = Upload;
 const { TextArea } = Input;
@@ -17,7 +18,7 @@ const SellPage = (props) => {
         name: 'image',
         multiple: true,
         accepts: 'image/png, image/jpeg, image/svg',
-        action: `http://127.0.0.1:5000/post/upload`,
+        action: `${API_URL}/post/upload`,
         listType: 'picture',
         className: 'upload-list-inline',
         // fileList: files,

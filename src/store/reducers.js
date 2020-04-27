@@ -54,6 +54,11 @@ const reducer = (state = initialState, action) => {
                 post.likes = post.likes + 1
             }else{ post.likes = post.likes - 1}
             return {...state, ...post }
+        case type.SUBMIT_BID:
+            console.log(action.payload)
+            let bidpost = state.post
+            bidpost.bids.push(action.payload)
+            return {...state, ...bidpost }
         default:
             return state
     }

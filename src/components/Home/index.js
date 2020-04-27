@@ -7,14 +7,18 @@ import Axios from 'axios';
 import io from 'socket.io-client'
 import {StoreContext} from '../../store/store'
 import Loader from '../Loader'
+import API_URL from '../../config'
 
 const { Search } = Input;
 const { Meta } = Card;
 
 const Home = () => {
     const { state, actions } = useContext(StoreContext)
-    let server = 'http://localhost:5000'
-    let socket = io(server)
+
+    let token = sessionStorage.token || localStorage.token
+    let socket = io.connect(API_URL,{
+        query: {token: token}
+    })
 
     useEffect(() => {
         actions.getPosts()

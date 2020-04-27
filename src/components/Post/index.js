@@ -4,9 +4,18 @@ import { withRouter, Link, Redirect } from 'react-router-dom';
 import { FundViewOutlined, EyeOutlined, LikeOutlined, MailOutlined} from '@ant-design/icons';
 import './style.scss'
 import moment from 'moment'
+import io from 'socket.io-client'
 import { Carousel, Divider, Comment, Avatar, Form, Button, List, Input, Statistic, Tooltip } from 'antd';
+import API_URL from '../../config'
 const { TextArea } = Input;
 const { Search } = Input
+
+
+let token = sessionStorage.token || localStorage.token
+let socket = io.connect(API_URL,{
+    query: {token: token}
+})
+
 const PostPage = (props) => {
 
     const { state, actions } = useContext(StoreContext)
@@ -16,6 +25,9 @@ const PostPage = (props) => {
           postId: props.match.params.id,
           func: fillComments
       })
+      socket.on('output', msg => {
+        console.log(msg)
+    })
    }, [])
 
     const [slide, setSlide] = useState(0);
@@ -79,18 +91,7 @@ const PostPage = (props) => {
             comment: newComment,
             func: fillComment
         }
-        // setTimeout(() => {
-        //     setSubmitting(false)
-        //     setValue('')
-        //     setComments([
-        //         {
-        //             author: state.decoded.username,
-        //             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        //             content: <p>{value}</p>,
-        //             datetime: moment().fromNow(),
-        //         }, ...comments
-        //     ])
-        // }, 1000);
+
         actions.postComment(payload)
     };
 
@@ -99,6 +100,13 @@ const PostPage = (props) => {
     };
 
     const slider = useRef();
+
+    const submitBid = (bid) => {
+        console.log(bid)
+        //need to add socket validation from backend
+        socket.emit('bids', { bid: bid, username: state.decoded.username, postId: props.match.params.id })
+        // actions.submitBid({bid:bid, username: state.decoded.username, postId: props.match.params.id})
+    }
 
     return (
         <div style={{ maxWidth: '1600px', margin: '100px auto' }}>
@@ -152,37 +160,14 @@ const PostPage = (props) => {
                         placeholder="enter your bid"
                         enterButton="enter"
                         size="small"
-                        onSearch={value => console.log(value)}
+                        onSearch={value => submitBid(value)}
                         />
                         <div style={{width:'170px', margin:'0 auto', paddingTop:'6px'}}>
                         <div>
-                        <p style={{marginBottom:'3px', display:'inline'}}>zerogravity: </p>
+                        <p className="bid-elem">zerogravity: </p>
                         <span style={{float:'right'}} >200SAR</span>
                         </div>
-                        <div>
-                        <p style={{marginBottom:'3px', display:'inline'}}>zerogravity: </p>
-                        <span style={{float:'right'}} >200SAR</span>
-                        </div>
-                        <div>
-                        <p style={{marginBottom:'3px', display:'inline'}}>zerogravity: </p>
-                        <span style={{float:'right'}} >200SAR</span>
-                        </div>
-                        <div>
-                        <p style={{marginBottom:'3px', display:'inline'}}>zerogravity: </p>
-                        <span style={{float:'right'}} >200SAR</span>
-                        </div>
-                        <div>
-                        <p style={{marginBottom:'3px', display:'inline'}}>zerogravity: </p>
-                        <span style={{float:'right'}} >200SAR</span>
-                        </div>
-                        <div>
-                        <p style={{marginBottom:'3px', display:'inline'}}>zerogravity: </p>
-                        <span style={{float:'right'}} >200SAR</span>
-                        </div>
-                        <div>
-                        <p style={{marginBottom:'3px', display:'inline'}}>zerogravity: </p>
-                        <span style={{float:'right'}} >200SAR</span>
-                        </div>
+                        
 
                         </div>
                     </div>

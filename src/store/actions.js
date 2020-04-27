@@ -51,5 +51,8 @@ export const useActions = (state, dispatch) => ({
     },
     likePost: data => {
         dispatch({type: types.LIKE_POST, payload: data})
+    },
+    submitBid: data => {
+        dispatch({type: types.SUBMIT_BID, payload: data})
     }
 })
