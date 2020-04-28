@@ -3,7 +3,7 @@ import { StoreContext } from '../../store/store'
 import { withRouter, Link, Redirect } from 'react-router-dom';
 import { Upload, message, Divider, Input, Form, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import API_URL from '../../config'
+import {API_URL} from '../../config'
 import './style.scss'
 const { Dragger } = Upload;
 const { TextArea } = Input;
@@ -21,14 +21,15 @@ const SellPage = (props) => {
         action: `${API_URL}/post/upload`,
         listType: 'picture',
         className: 'upload-list-inline',
-        // fileList: files,
-        beforeUpload(file) {
+         beforeUpload(file) {
             const isLt2M = file.size / 1024 / 1024 < 2;
             if (!isLt2M) {
                 message.error('Image must smaller than 2MB!');
             }
             return isLt2M;
-        }, onChange(info) {
+        },
+        // fileList: files,
+        onChange(info) {
             const { status } = info.file;
             if (status !== 'uploading') {
                 console.log(info)
@@ -57,23 +58,6 @@ const SellPage = (props) => {
         <div className="sell-div">
             {console.log(files)}
             <div>
-                <Dragger showUploadList={showUploadList} {...settings}>
-                    <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                    </p>
-                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                    <p className="ant-upload-hint">
-                        Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                        band files
-                </p>
-                </Dragger>
-                <div className="row">
-                    {files.length > 0 && files.map((ele) => {
-                        return ele.response && ele.response.imageUrl ?
-                            <img className="col-3 mt-2 mb-2 preview-img" key={ele.uid} src={ele.response.imageUrl} /> : null
-                    })}
-                </div>
-                <Divider />
                 <Form hideRequiredMark onFinish={onFinish} layout='vertical'>
                     <div>
                         <Form.Item
@@ -114,6 +98,23 @@ const SellPage = (props) => {
                     </Button>
                     </Form.Item>
                 </Form>
+                <Dragger showUploadList={showUploadList} {...settings}>
+                    <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                    </p>
+                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                    <p className="ant-upload-hint">
+                        Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                        band files
+                </p>
+                </Dragger>
+                <div className="row">
+                    {files.length > 0 && files.map((ele) => {
+                        return ele.response && ele.response.imageUrl ?
+                            <img className="col-3 mt-2 mb-2 preview-img" key={ele.uid} src={ele.response.imageUrl} /> : null
+                    })}
+                </div>
+                <Divider />
             </div>
 
         </div>

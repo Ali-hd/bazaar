@@ -40,7 +40,7 @@ height: 210px;
 }
 
 .main-title-box{
-    
+    white-space:nowrap;
 }
 
 .main-subTitle-box{
@@ -53,4 +53,12 @@ height: 210px;
     height: 100%;
     object-fit: cover;
     padding-right: 2px;
+}
+
+.no-results{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    font-size: x-large;
 }

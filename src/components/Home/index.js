@@ -7,7 +7,7 @@ import Axios from 'axios';
 import io from 'socket.io-client'
 import {StoreContext} from '../../store/store'
 import Loader from '../Loader'
-import API_URL from '../../config'
+import {API_URL} from '../../config'
 
 const { Search } = Input;
 const { Meta } = Card;
@@ -26,6 +26,11 @@ const Home = () => {
             console.log(msg)
         })
     }, [])
+
+    const searchOnChange = e => {
+        console.log(e.target.value)
+        actions.searchOnChange(e.target.value)
+    }
 
     // const handleChange = (info) => {
     //     const { status } = info.file;
@@ -63,6 +68,7 @@ const Home = () => {
             placeholder="input search text"
             enterButton="search"
             size="large"
+            onChange={searchOnChange}
             onSearch={value => console.log(value)}
         />
     </div>
@@ -89,7 +95,7 @@ const Home = () => {
         />
         </Card>
 </div> */}
-            {state.posts ? state.posts.map((post)=>{
+            {state.posts && state.posts.length>0 ? state.posts.map((post)=>{
             return <div key={post._id} className="col-md-4 pt-4 col-lg-3 col-sm-6">
                 <div className="post-box">
                     <div className="image-box">
@@ -110,7 +116,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            }):<Loader/>}
+            }):state.posts && state.posts.length<1 ? <div className="no-results"> no results :( </div> :<Loader/>}
         </div>
 
         <button onClick={send}>click me</button>

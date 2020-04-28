@@ -52,13 +52,25 @@ const reducer = (state = initialState, action) => {
             let post = state.post
             if(action.payload.msg === "liked"){
                 post.likes = post.likes + 1
-            }else{ post.likes = post.likes - 1}
+            }else if(action.payload.msg === "unliked"){ post.likes = post.likes - 1}
             return {...state, ...post }
         case type.SUBMIT_BID:
             console.log(action.payload)
             let bidpost = state.post
-            bidpost.bids.push(action.payload)
+            bidpost.bids = action.payload
             return {...state, ...bidpost }
+        case type.EDIT_PROFILE_PICTURE:
+            let editUserPic = state.user
+            editUserPic.profileImg = action.payload.profileImg
+            return {...state, ...editUserPic }
+        case type.EDIT_PROFILE:
+            action.payload.func()
+            return {...state, ...action.payload.values}
+        case type.SEARCH_ON_CHANGE:
+            let updatePosts = state.posts 
+            updatePosts = action.payload
+            console.log(updatePosts)
+            return {...state, ...{posts: updatePosts}}
         default:
             return state
     }

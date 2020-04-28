@@ -44,7 +44,6 @@ export const useActions = (state, dispatch) => ({
     getSinglePost: data => {
         console.log(data)
         dispatch({type: types.GET_SINGLE_POST, payload: data})
-
     },
     postComment: data => {
         dispatch({type: types.POST_COMMENT, payload: data})
@@ -54,5 +53,19 @@ export const useActions = (state, dispatch) => ({
     },
     submitBid: data => {
         dispatch({type: types.SUBMIT_BID, payload: data})
+    },
+    editProfilePic: data => {
+        dispatch({type: types.EDIT_PROFILE_PICTURE, payload: data})
+    },
+    changePassword: data => {
+        console.log(data)
+        dispatch({type: types.CHANGE_PASSWORD, payload: data})
+    },
+    editProfile: data => {
+        dispatch({type: types.EDIT_PROFILE, payload: data})
+    },
+    searchOnChange: data => {
+        dispatch({type: types.SEARCH_ON_CHANGE, payload: data})
     }
+
 })

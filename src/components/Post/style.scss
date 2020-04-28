@@ -52,7 +52,7 @@
 .post-carousel-box{
     max-width: 800px;
     margin: 0 auto;
-    height: 500px;
+    height: 700px;
     margin-bottom: 20px;
 }
 
@@ -62,11 +62,43 @@
    
 }
 
+.carousel-frame{
+    height: 700px;      /* equals max image height */
+    width: 800px;
+    position: relative;
+}
+
+.carousel-img{
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+
+.ant-carousel .slick-dots li.slick-active button{
+    background: rgb(13, 95, 150) !important;
+}
+
+.ant-carousel .slick-dots li button {
+    background: black;
+}
+
+// position: relative;
+// top: 50%;
+// transform: translateY(-50%);
+
 .ant-carousel .slick-slide {
     text-align: center;
-    height: 500px;
-    line-height: 500px;
-    background: #364d79;
+    height: 700px;
+    line-height: 700px;
+    background: #ffffff;
     overflow: hidden;
   }
   
@@ -74,6 +106,9 @@
     color: #fff;
   }
 
+  .bid-div-1{
+      background-color: rgb(248, 244, 244);
+  }
 
   .post-description{
     max-width: 800px;

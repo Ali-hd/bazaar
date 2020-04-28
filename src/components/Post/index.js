@@ -1,19 +1,19 @@
 import React, { useContext, useRef, useState, useEffect } from 'react'
 import { StoreContext } from '../../store/store'
 import { withRouter, Link, Redirect } from 'react-router-dom';
-import { FundViewOutlined, EyeOutlined, LikeOutlined, MailOutlined} from '@ant-design/icons';
+import { FundViewOutlined, EyeOutlined, LikeOutlined, MailOutlined, LikeTwoTone} from '@ant-design/icons';
 import './style.scss'
 import moment from 'moment'
 import io from 'socket.io-client'
-import { Carousel, Divider, Comment, Avatar, Form, Button, List, Input, Statistic, Tooltip } from 'antd';
-import API_URL from '../../config'
+import { Carousel, Divider, Comment, Avatar, Form, Button, List, Input, Statistic, Tooltip, message } from 'antd';
+import {API_URL} from '../../config'
+import { token } from '../../store/middleware'
 const { TextArea } = Input;
 const { Search } = Input
 
-
-let token = sessionStorage.token || localStorage.token
+console.log(token())
 let socket = io.connect(API_URL,{
-    query: {token: token}
+    query: {token: token()}
 })
 
 const PostPage = (props) => {
@@ -26,7 +26,12 @@ const PostPage = (props) => {
           func: fillComments
       })
       socket.on('output', msg => {
-        console.log(msg)
+        console.log('socket received',msg)
+        if(Array.isArray(msg)){
+            actions.submitBid(msg)
+        }else{
+            message.error(msg)
+        }
     })
    }, [])
 
@@ -35,8 +40,7 @@ const PostPage = (props) => {
     const [submitting, setSubmitting] = useState(false);
     const [value, setValue] = useState('');
 
-    const onhover = (i) => {
-        setSlide(2)
+    const changeSlide = (i) => {
         slider.current.goTo(i)
     }
 
@@ -55,6 +59,7 @@ const PostPage = (props) => {
 
     const fillComment = (params) => {
         setSubmitting(false)
+        setValue('')
         setComments([
                      ...comments,{
                         author: params.username,
@@ -103,9 +108,7 @@ const PostPage = (props) => {
 
     const submitBid = (bid) => {
         console.log(bid)
-        //need to add socket validation from backend
-        socket.emit('bids', { bid: bid, username: state.decoded.username, postId: props.match.params.id })
-        // actions.submitBid({bid:bid, username: state.decoded.username, postId: props.match.params.id})
+        socket.emit('bids', { bid: bid, postId: props.match.params.id })
     }
 
     return (
@@ -116,20 +119,21 @@ const PostPage = (props) => {
             </div>
             <div className="post-images-box">
                 <div className="post-carousel-box">
-                    <Carousel dots={true}
+                    {state.post ? <Carousel dots={true}
                         ref={ref => {
                             slider.current = ref;
                         }}>
-                        {state.post && state.post.images.map(img=>{
-                            return <div key={img}>
-                                    <img width="100%" height="500px" src={img} />
+                        {state.post.images.map(img=>{
+                            return <div className="carousel-frame" key={img}>
+                                    <img className="carousel-img" src={img} />
                             </div>
                         })}
-                    </Carousel>
+                    </Carousel> : null
+                    }
                 </div>
                 <div className="post-preview-boxes row">
                 {state.post && state.post.images.map((img,index)=>{
-                            return <div key={img} onClick={() => onhover(index)} className="post-preview-img col-md-2-5">
+                            return <div key={img} onClick={() => changeSlide(index)} className="post-preview-img col-md-2-5">
                             <img width="100%" height="100%" src={img} />
                         </div>
                         })}
@@ -162,13 +166,17 @@ const PostPage = (props) => {
                         size="small"
                         onSearch={value => submitBid(value)}
                         />
-                        <div style={{width:'170px', margin:'0 auto', paddingTop:'6px'}}>
-                        <div>
-                        <p className="bid-elem">zerogravity: </p>
-                        <span style={{float:'right'}} >200SAR</span>
-                        </div>
-                        
-
+                        <div style={{  paddingTop:'6px'}}>
+                        {state.post && state.post.bids.map((bid, i)=>{
+                            return <div key={bid.bid} className={i%2 == 0 ? "bid-div-1" : "bid-div-2"}>
+                            <div style={{width:'170px', margin:'0 auto',}}>
+                            <Link to={`/user/${bid.username}`}>
+                            <p className="bid-elem">{bid.username }</p>
+                            </Link>
+                            <span style={{float:'right'}} >{bid.bid}SAR</span>
+                            </div>
+                            </div>
+                        })}
                         </div>
                     </div>
                     </div>

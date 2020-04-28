@@ -3,6 +3,7 @@ import { Route, Switch, BrowserRouter } from 'react-router-dom'
 import Loader from './components/Loader'
 import NavBar from './components/NavBar'
 import {StoreProvider} from './store/store'
+import ScrollTopTop from './helpers/ScrollToTop'
 import 'dotenv/config'
 
 
@@ -19,6 +20,7 @@ function App(){
     <StoreProvider>
     <BrowserRouter>
         <Suspense fallback={<Loader />}>
+        <ScrollTopTop/>
         <NavBar/>
         <Switch>
             <Route path="/" exact>

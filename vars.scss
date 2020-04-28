@@ -2,3 +2,11 @@
 
 $primary-color: #282c34;
 $secondary-color: #61dafb;
+
+
+//bug icons not vertically aligned
+.anticon{
+    svg{
+        vertical-align: 0;
+    }
+}

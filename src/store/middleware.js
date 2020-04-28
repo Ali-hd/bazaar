@@ -1,9 +1,10 @@
 import types from './typeActions'
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
-import API_URL from '../config'
+import {API_URL} from '../config'
+import { message } from 'antd'
 
-const token = () => {
+export const token = () => {
     if(localStorage.getItem('token')){
         return localStorage.getItem('token')
     }else if(sessionStorage.getItem("token")){
@@ -16,7 +17,7 @@ const token = () => {
 export const applyMiddleware = dispatch => action => {
     switch (action.type){
         case types.LOGIN:
-            return axios.post(API_URL, action.payload)
+            return axios.post(`${API_URL}/auth/login`, action.payload)
             .then(res=>dispatch({
                 type: types.LOGIN_SUCCESS,
                 payload: res.data, rememberMe: action.payload.remember }))
@@ -89,17 +90,41 @@ export const applyMiddleware = dispatch => action => {
                 type: types.ERROR,
                 payload: err.response.data
             })) 
-        case types.SUBMIT_BID:
-            return axios.post(`${API_URL}/post/${action.payload.postId}/bid`,action.payload, { headers: { Authorization: `Bearer ${token()}` } })
+        case types.EDIT_PROFILE_PICTURE:
+            return axios.put(`${API_URL}/user/${action.payload.userId}`,action.payload, { headers: { Authorization: `Bearer ${token()}` } })
             .then(res=>dispatch({
-                type: types.SUBMIT_BID,
+                type: types.EDIT_PROFILE_PICTURE,
                 payload: action.payload }))
             .catch(err=>dispatch({
                 type: types.ERROR,
                 payload: err.response.data
             })) 
+        case types.CHANGE_PASSWORD:
+            console.log(action.payload)
+            return axios.post(`${API_URL}/auth/${action.payload.userId}`,action.payload.values, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>{
+                action.payload.func()
+                message.success(res.data.msg)
+            })
+            .catch(err=>message.error(err.response.data.msg)) 
+        case types.EDIT_PROFILE:
+            return axios.put(`${API_URL}/user/${action.payload.userId}`,action.payload.values, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.EDIT_PROFILE,
+                payload: action.payload }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            }))  
+        case types.SEARCH_ON_CHANGE: 
+            return axios.post(`${API_URL}/post/search`,{search: action.payload})
+            .then(res=>dispatch({
+                type: types.SEARCH_ON_CHANGE,
+                payload: res.data }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            }))  
         default: dispatch(action)
     }
 }
-
-export default token
