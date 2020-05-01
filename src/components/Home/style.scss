@@ -5,13 +5,13 @@
 }
 
 .searchInput{
-    width: 400;
+    // width: 400;
     margin-top: 40px;
     // border-radius: 10px;
 }
 
 .all-posts-div{
-    margin: 0 auto;
+    margin: 0 auto 100px auto;
     max-width: 1440px;
 }
 
@@ -23,7 +23,20 @@ height: 210px;
 }
 
 .image-box{
-    
+    position: relative;
+    text-align: center;
+    .ant-badge{
+        position: static;
+        display: block;
+    }
+}
+
+.views-box{
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    padding: 5px;
+    background-color: blueviolet;
 }
 
 .post-box-image{

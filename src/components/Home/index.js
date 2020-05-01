@@ -1,69 +1,44 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Input, Button, Card, Avatar, Upload, message } from 'antd'
+import { Input, Button, Card, Avatar, Badge, Tabs} from 'antd'
 import './style.scss'
 import { withRouter, Link } from 'react-router-dom'
-import { UploadOutlined } from '@ant-design/icons';
-import Axios from 'axios';
-import io from 'socket.io-client'
 import {StoreContext} from '../../store/store'
 import Loader from '../Loader'
-import {API_URL} from '../../config'
 
 const { Search } = Input;
-const { Meta } = Card;
-
+const { TabPane } = Tabs;
+// const { Meta } = Card;
+const cities = ['All', 'Riyadh', 'Jeddah', 'Makkah', 'Medina','Qatif', 'Yanbu', 'Hafr Al-Batin', 'Taif', 'Tabuk', 'Buraydah', 'Unaizah', 'Jubail', 'Jizan', 'Al Jawf', 'Hofuf', 'Gurayat', 'Dhahran', 'Bisha', 'Arar', 'Abha']
 const Home = () => {
     const { state, actions } = useContext(StoreContext)
-
-    let token = sessionStorage.token || localStorage.token
-    let socket = io.connect(API_URL,{
-        query: {token: token}
-    })
+    const [page, setPage] = useState(1)
 
     useEffect(() => {
-        actions.getPosts()
-        socket.on('output', msg => {
-            console.log(msg)
-        })
+        !state.posts && actions.getPosts('1')
     }, [])
 
+    const showmore = () => {
+        console.log('show more')
+        setPage(page + 1)
+        actions.getPosts(page + 1)
+    }
+
     const searchOnChange = e => {
-        console.log(e.target.value)
         actions.searchOnChange(e.target.value)
     }
 
-    // const handleChange = (info) => {
-    //     const { status } = info.file;
-    //     if (status !== 'uploading') {
-    //         console.log(info)
-    //         message.success(`${info.file.name} file uploaded successfully.`)
-    //     }
-    //     if (status === 'done') {
-    //         message.success(`${info.file.name} file uploaded successfully.`)
-    //         console.log(info)
-    //     } else if (status === 'error') {
-    //         message.error(`${info.file.name} file upload failed.`);
-    //     }
-    // }
-
-    const send = () => {
-        socket.emit('name', { msg: 'hi' })
-    }
-
-    // const Upload = () => {
-    //     Axios.post('http://127.0.0.1:5000/post/upload')
-    // }
-
-    // const props = {
-    //     name: 'image',
-    //     multiple: true,
-    //     accepts: 'image/png, image/jpeg, image/svg',
-    //     action: `http://127.0.0.1:5000/post/upload`,
-    //     onChange: handleChange,
-    // }
     return (<div><div style={{ margin: '0 auto', maxWidth: '1000px' }} className="col-lg-10 text-center">
         {console.log(state)}
+        <Tabs defaultActiveKey="1" tabPosition={'top'} style={{ height: 50 }}>
+          {cities.map(i => (
+            <TabPane tab={i} key={i}>
+              
+            </TabPane>
+          ))}
+        </Tabs>
+        <div style={{maxWidth:'500px', margin:'0 auto'}}>
         <Search
+            style={{width:'300'}}
             className="searchInput"
             placeholder="input search text"
             enterButton="search"
@@ -71,6 +46,7 @@ const Home = () => {
             onChange={searchOnChange}
             onSearch={value => console.log(value)}
         />
+        </div>
     </div>
         <div className="row pl-3 pr-3 pt-5 all-posts-div">
             {/* <div className="col-md-4 pt-4 col-lg-3 col-sm-6">
@@ -99,13 +75,17 @@ const Home = () => {
             return <div key={post._id} className="col-md-4 pt-4 col-lg-3 col-sm-6">
                 <div className="post-box">
                     <div className="image-box">
+                        {/* <span className="views-box"> views 200</span> */}
+                        <Badge showZero overflowCount={999} count={post.views}>
                         <Link to={`/post/${post._id}`}>
                             <img className="post-box-image" alt="post img" onError={(e)=>{e.target.onerror = null; e.target.src="https://i.imgur.com/lpm3KS3.png"}} src={post.images[0]} />
                         </Link>
+                        </Badge>
+                        {/* <sup data-show="true" class="ant-scroll-number ant-badge-count ant-badge-multiple-words" title="27"> <span>JED</span></sup> */}
                     </div>
                     <div className="row pt-1">
                         <div className="title-box col-8">
-                            <div className="main-title-box"><span>{post.title}</span></div>
+                            <div className="main-title-box"><span>{post.title.length>30 ? post.title.slice(0,30)+".." : post.title}</span></div>
                             <div className="main-subTitle-box"><span>{post.location}</span></div>
                         </div>
                         <div className="col-3 pt-1 pb-3">
@@ -119,7 +99,7 @@ const Home = () => {
             }):state.posts && state.posts.length<1 ? <div className="no-results"> no results :( </div> :<Loader/>}
         </div>
 
-        <button onClick={send}>click me</button>
+        {state.more_posts ? <Button onClick={showmore} style={{margin:'100px auto 100px auto', display:'flex', }}>show more</Button> : null}
     </div>
     )
 

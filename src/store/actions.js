@@ -8,12 +8,11 @@ export const useActions = (state, dispatch) => ({
         dispatch({type: types.LOGIN, payload: data})
     },
     logout: data => {
-        dispatch({type: types.SET_STATE, payload: {session: false, decoded: null, user: null, status: '', alert: null, error: false}})
         localStorage.removeItem("token")
         sessionStorage.removeItem("token")
+        window.location.reload()
     },
     getUser: data => {
-        console.log('get user middlewear')
         dispatch({type: types.SET_STATE, payload: {loadingUserPage: true}})
         dispatch({type: types.GET_USER, payload: data})
     },
@@ -27,9 +26,8 @@ export const useActions = (state, dispatch) => ({
         dispatch({type: types.REGISTER, payload: data})
     },
     getPosts: data => {
-        console.log('getting posts')
         dispatch({type: types.SET_STATE, payload: {loadingPosts: true}})
-        dispatch({type: types.GET_POSTS})
+        dispatch({type: types.GET_POSTS, payload: data})
     },
     sellPost: data => {
         dispatch({type: types.SET_STATE, payload: {loading: true}})
@@ -66,6 +64,12 @@ export const useActions = (state, dispatch) => ({
     },
     searchOnChange: data => {
         dispatch({type: types.SEARCH_ON_CHANGE, payload: data})
-    }
-
+    },
+    checkUsername: data => {
+        dispatch({type: types.SET_STATE, payload: {checkingUsername: true}})
+        dispatch({type: types.CHECK_USERNAME, payload: data})
+    },
+    rateUser: data => {
+        dispatch({type: types.RATE_USER, payload: data})
+    },
 })

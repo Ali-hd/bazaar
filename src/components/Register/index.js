@@ -62,9 +62,15 @@ import './style.scss'
     // const [error, setError] = useState(state.error)
  
     const onFinish = values => {
+      if(state.usernameAvailable)
        actions.registerUser(values)
        console.log('Received values of form: ', values);
     };
+
+    const checkUsername = e => {
+      if(e.target.value.length>0)
+      actions.checkUsername(e.target.value)
+    }
  
     // const handleClose = () => {
     //    actions.userActions({type: 'alert close'})
@@ -89,6 +95,8 @@ import './style.scss'
                     <Form.Item
                         name="username"
                         hasFeedback
+                        validateStatus={state.checkingUsername? "validating" : state.usernameAvailable ? 'success' : 'error'}
+                        help={!state.usernameAvailable && "username already exist"}
                         label={
                         <span>
                             Username&nbsp;
@@ -105,7 +113,7 @@ import './style.scss'
                         },
                         ]}
                     >
-                        <Input />
+                        <Input onChange={checkUsername} />
                     </Form.Item>
 
                     <Form.Item

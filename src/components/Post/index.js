@@ -33,7 +33,7 @@ const PostPage = (props) => {
             message.error(msg)
         }
     })
-   }, [])
+   }, [props.match.params.id])
 
     const [slide, setSlide] = useState(0);
     const [comments, setComments] = useState([]);

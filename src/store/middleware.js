@@ -1,6 +1,5 @@
 import types from './typeActions'
 import axios from 'axios'
-import { withRouter } from 'react-router-dom'
 import {API_URL} from '../config'
 import { message } from 'antd'
 
@@ -35,7 +34,8 @@ export const applyMiddleware = dispatch => action => {
                 payload: err.response.data
             }))
         case types.GET_POSTS:
-            return axios.get(`${API_URL}/post/`, action.payload)
+            console.log(action.payload)
+            return axios.get(`${API_URL}/post?page=${action.payload}&limit=16`)
             .then(res=>dispatch({
                 type: types.GET_POSTS_SUCCESS,
                 payload: res.data }))
@@ -52,8 +52,8 @@ export const applyMiddleware = dispatch => action => {
                 type: types.ERROR,
                 payload: err.response.data
             }))
-        case types.GET_USER:
-            return axios.get(`${API_URL}/user/${action.payload}`)
+        case types.GET_USER:    
+            return axios.get(`${API_URL}/user/${action.payload.userId}?type=${action.payload.type? action.payload.type : 'get'}`, { headers: { Authorization: `Bearer ${token()}` }})
             .then(res=>dispatch({
                 type: types.GET_USER,
                 payload: res.data }))
@@ -124,7 +124,25 @@ export const applyMiddleware = dispatch => action => {
             .catch(err=>dispatch({
                 type: types.ERROR,
                 payload: err.response.data
-            }))  
+            }))
+        case types.CHECK_USERNAME:
+            return axios.post(`${API_URL}/auth/${action.payload}/check`)
+            .then(res=>dispatch({
+                type: types.CHECK_USERNAME,
+                payload: res.data }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            }))
+        case types.RATE_USER:
+            return axios.post(`${API_URL}/user/${action.payload.userId}/rate`,action.payload.values, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.RATE_USER,
+                payload: action.payload }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            })) 
         default: dispatch(action)
     }
 }

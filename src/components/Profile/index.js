@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { StoreContext } from '../../store/store'
 import { withRouter, Link} from 'react-router-dom';
 import { Divider, Menu, Upload, message, Rate, Avatar, Button, Form, Input } from 'antd'
+import Loader from '../Loader'
 import { API_URL } from '../../config'
 import { MailOutlined, AppstoreOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import moment from 'moment'
@@ -13,11 +14,12 @@ const ProfilePage = (props) => {
     const [activeTab, setActiveTab] = useState('posts')
     const [edit, setEdit] = useState(false)
     const [passwordField, setPasswordField] = useState(false)
-
+    const [rate, setRate] = useState(false)
     useEffect(() => {
-        actions.getUser(props.match.params.username)
+        actions.getUser({userId: props.match.params.username})
+        setActiveTab('posts')
         console.log(props)
-    }, [])
+    }, [props.match.params.username])
 
     const toggleEdit = () => {
         setEdit(!edit)
@@ -38,6 +40,17 @@ const ProfilePage = (props) => {
     }
     const changeTab = e => {
         setActiveTab(e.key)
+        if(e.key === 'likes' && state.user.liked && !state.user.liked[0].createdAt){
+            actions.getUser({userId: props.match.params.username, type: 'liked'})
+        }
+    }
+
+    const toggleRateUser = () => {
+        setRate(!rate)
+    }
+
+    const submitRating = values => {
+        actions.rateUser({userId:props.match.params.username, values, func: toggleRateUser})
     }
 
     const settings = {
@@ -77,6 +90,8 @@ const ProfilePage = (props) => {
                     </div>
                 </div>
                 <p style={{fontSize:'20px'}}>{state.user && state.user.username}</p>
+                {state.decoded && state.decoded.username === props.match.params.username ? 
+                <div>
                 {!edit?  
                 <div className="d-inline">
                     {/* <p>Bio:</p> */}
@@ -101,7 +116,7 @@ const ProfilePage = (props) => {
                         },
                         ]}
                     >
-                        <TextArea defaultValue={state.user && state.user.description} />
+                        <TextArea/>
                     </Form.Item>
                     <Form.Item
                         name="location"
@@ -112,7 +127,7 @@ const ProfilePage = (props) => {
                         },
                         ]}
                     >
-                        <Input defaultValue={state.user && state.user.description} />
+                        <Input/>
                     </Form.Item>
                     <Divider className="mb-3 mt-2"/>
                     <Form.Item>
@@ -174,8 +189,26 @@ const ProfilePage = (props) => {
                         <Button htmlType="submit" block>Update Password</Button>
                     </Form.Item>
                     </Form>
-                </div> :<Button onClick={togglePassword} shape="round" style={{display:'flex', margin:'20px auto 20px auto'}}>Change password</Button>}      
-                
+                </div> :<Button onClick={togglePassword} shape="round" style={{display:'flex', margin:'20px auto 20px auto'}}>Change password</Button>}     
+                </div>: <div>
+                    {!rate ? <Button onClick={toggleRateUser} block> Rate User</Button>
+                     : <div>
+                         <Form onFinish={submitRating}>
+                             <Form.Item rules={[{ required: true, message: 'Please enter a rating'}]} className="mb-2" name="star">
+                                <Rate allowHalf />
+                             </Form.Item>
+                             <Form.Item className="mb-3" name="description">
+                                <TextArea placeholder="How was your experience?"/>
+                             </Form.Item>
+                             <Form.Item>
+                                <Button htmlType="submit" block>Submit</Button>
+                             </Form.Item>
+                         </Form>
+
+                         
+                         </div>}
+                        
+                    </div>}
            </div>
            <div className="profile-menu col-lg-9 col-md-8 col-12">
                 <div>
@@ -188,14 +221,16 @@ const ProfilePage = (props) => {
                         <AppstoreOutlined />
                             Ratings
                         </Menu.Item>
-                    <Menu.Item className={activeTab !== 'likes' && 'modified-item'} key="likes">
+                        {props.match.params.username === state.decoded.username && 
+                        <Menu.Item className={activeTab !== 'likes' && 'modified-item'} key="likes">
                         <AppstoreOutlined />
                             Likes
-                        </Menu.Item>
+                        </Menu.Item>}
                 </Menu>
                 </div>
+                {state.user && state.user.posts && state.user.posts[0] && state.user.posts[0].title ?  
                 <div className="mt-3">
-                    { activeTab === "posts" && state.user && state.user.posts && state.user.posts[0].title ? state.user.posts.map(p=>{
+                    { activeTab === "posts" ? state.user.posts.map(p=>{
                         return <Link key={p._id} to={`/post/${p._id}`}>
                         <div className="user-post-box p-1">
                             <div className="user-post-frame">
@@ -204,22 +239,39 @@ const ProfilePage = (props) => {
                             <div style={{ display: 'inline-block', marginLeft: '10px', height: '120px'}}>
                                 <h5>{p.title}</h5>
                                 <p style={{display:'inline'}}>{p.description.slice(0,80)}</p>
-                                <p className="mb-1">{p.createdAt}</p>
-                                <p>Comments(23)</p>
+                                <p className="mb-1">Comments({p.comments.length})</p>
+                                <p >{moment(p.createdAt).format('DD MMM YYYY')}</p>
                             </div>
                         </div>
                         </Link> 
-                    }): activeTab === "reviews" ? <div>
+                    }): activeTab === "reviews" ? state.user.ratings.map(r=>{
+                        return <div key={r.username}>
                         <div className="user-review-box">
-                        <div >
+                        <div>
                             <Avatar className="mb-2 mr-2" shape="square" size={24} icon={<UserOutlined />}/>
-                            <p style={{display:'inline-block', fontSize:'22px'}}>zero</p>
+                            <Link to={`/user/${r.username}`}>
+                            <p style={{display:'inline-block', fontSize:'22px'}}>{r.username}</p>
+                            </Link>
+                            </div>
+                            <p>{r.description}</p>
+                            <Rate disabled defaultValue={r.star} />
                         </div>
-                        <p>best seller</p>
-                        <Rate disabled defaultValue={4} />
+                    </div>
+                    }) : activeTab === "likes" && state.user.liked[0].createdAt ? state.user.liked.map(p=>{
+                        return <Link key={p._id} to={`/post/${p._id}`}>
+                        <div className="user-post-box p-1">
+                            <div className="user-post-frame">
+                                <img src={p.images[0]} className="user-post-img"/>
+                            </div>
+                            <div style={{ display: 'inline-block', marginLeft: '10px', height: '120px'}}>
+                                <h5>{p.title}</h5>
+                                <p style={{display:'inline'}}>{p.description.slice(0,80)}</p>
+                                <p className="mb-1">Comments({p.comments.length})</p>
+                                <p >{moment(p.createdAt).format('DD MMM YYYY')}</p>
+                            </div>
                         </div>
-                    </div>:<h6>Nothing here :(</h6>}
-                </div>
+                    </Link> }):<h6>Nothing here :(</h6>}
+                    </div> : <Loader/> }
            </div>
         </div>
     )

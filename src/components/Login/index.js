@@ -7,17 +7,10 @@ import './style.scss'
 import token from '../../store/middleware'
 
 const LoginPage = (props) => {
-   const { state, actions } = useContext(StoreContext)
-   // useEffect(() => {
-   //    console.log('use effect')
-   //    actions.loginUser('what you want to search ? ')
-   // }, [])
-         
-   const [error, setError] = useState(state.error)
+   const { state, actions } = useContext(StoreContext)    
 
    const onFinish = values => {
       actions.loginUser(values)
-      // console.log('Received values of form: ', values);
    };
 
    const handleClose = () => {
@@ -27,8 +20,6 @@ const LoginPage = (props) => {
    return (
       <div>
          {state.status == "logged in" && <Redirect to="/"/>}
-         {/* {console.log(sessionStorage.getItem("token"))} */}
-         {/* {console.log(state, token())}      */}
          <Form
             name="normal_login"
             className="login-form"

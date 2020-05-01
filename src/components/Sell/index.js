@@ -1,18 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { StoreContext } from '../../store/store'
 import { withRouter, Link, Redirect } from 'react-router-dom';
-import { Upload, message, Divider, Input, Form, Button } from 'antd';
+import { Upload, message, Divider, Input, Form, Button, Select } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import {API_URL} from '../../config'
 import './style.scss'
 const { Dragger } = Upload;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const SellPage = (props) => {
     const { state, actions } = useContext(StoreContext)
 
     const [files, setFiles] = useState([])
     const [images, setImages] = useState([])
+
+    const cities = ['Riyadh', 'Qatif', 'Jeddah', 'Makkah', 'Medina', 'Yanbu', 'Hafr Al-Batin', 'Taif', 'Tabuk', 'Buraydah', 'Unaizah', 'Jubail', 'Jizan', 'Al Jawf', 'Hofuf', 'Gurayat', 'Dhahran', 'Bisha', 'Arar', 'Abha']
 
     const settings = {
         name: 'image',
@@ -47,6 +50,7 @@ const SellPage = (props) => {
     };
 
     const onFinish = values => {
+        console.log(values)
         let payload = values
         payload.images = images
         actions.sellPost(payload)
@@ -71,6 +75,25 @@ const SellPage = (props) => {
                                 placeholder="Enter a title for the item you are selling" />
                         </Form.Item>
                         <Form.Item
+                        name="location"
+                        label="location"
+                        rules={[{ required: true, message: 'Please choose your location' }]}
+                        >
+                        <Select
+                            showSearch
+                            className="title-form"
+                            placeholder="Select your location"
+                            optionFilterProp="children"
+                            filterOption={(input, option) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                        >   
+                            {cities.map(city=>{
+                                return <Option key={city} value={city.toLowerCase()}>{city}</Option>
+                            })}
+                        </Select>
+                        </Form.Item>
+                        {/* <Form.Item
                             className="title-form"
                             name="location"
                             label="Location"
@@ -79,7 +102,7 @@ const SellPage = (props) => {
                             <Input
                                 className="login-input"
                                 placeholder="Enter the closest location" />
-                        </Form.Item>
+                        </Form.Item> */}
                     </div>
 
                     <Form.Item
@@ -92,29 +115,29 @@ const SellPage = (props) => {
                             autoSize={{ minRows: 3, maxRows: 10 }}
                             placeholder="Enter your description here" />
                     </Form.Item>
+                    <Dragger style={{marginTop:'15px'}} showUploadList={showUploadList} {...settings}>
+                        <p className="ant-upload-drag-icon">
+                            <InboxOutlined />
+                        </p>
+                        <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                        <p className="ant-upload-hint">
+                            Support for a single or bulk upload. Only allowed 4 images ( jpg - png ), 2MB max per image
+                    </p>
+                    </Dragger>
+                    <div className="row">
+                        {files.length > 0 && files.map((ele) => {
+                            return ele.response && ele.response.imageUrl ?
+                                <img className="col-3 mt-2 mb-2 preview-img" key={ele.uid} src={ele.response.imageUrl} /> : null
+                        })}
+                    </div>
+                    <Divider />
                     <Form.Item style={{marginTop:'15px'}}>
                     <Button style={{ marginBottom: '5px' }} type="primary" htmlType="submit">
                         sell now
                     </Button>
                     </Form.Item>
                 </Form>
-                <Dragger showUploadList={showUploadList} {...settings}>
-                    <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                    </p>
-                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                    <p className="ant-upload-hint">
-                        Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                        band files
-                </p>
-                </Dragger>
-                <div className="row">
-                    {files.length > 0 && files.map((ele) => {
-                        return ele.response && ele.response.imageUrl ?
-                            <img className="col-3 mt-2 mb-2 preview-img" key={ele.uid} src={ele.response.imageUrl} /> : null
-                    })}
-                </div>
-                <Divider />
+                
             </div>
 
         </div>
