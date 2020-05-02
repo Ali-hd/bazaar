@@ -18,7 +18,7 @@ export const useActions = (state, dispatch) => ({
     },
     userActions: data => {
         if(data.type === "alert close"){
-            dispatch({type: types.SET_STATE, payload: {alert: null}})
+            dispatch({type: types.SET_STATE, payload: {msg: ''}})
         }
     },
     registerUser: data => {
@@ -29,9 +29,10 @@ export const useActions = (state, dispatch) => ({
         dispatch({type: types.SET_STATE, payload: {loadingPosts: true}})
         dispatch({type: types.GET_POSTS, payload: data})
     },
-    sellPost: data => {
+    sellPost: (data, func) => {
+        console.log(func)
         dispatch({type: types.SET_STATE, payload: {loading: true}})
-        dispatch({type: types.SELL_POST, payload: data})
+        dispatch({type: types.SELL_POST, payload: data, func: func})
     },
     verifyToken: data => {
         jwt.verify(localStorage.getItem('token') || sessionStorage.getItem('token'), process.env.REACT_APP_JWT_SECRET, function (err, decoded) {

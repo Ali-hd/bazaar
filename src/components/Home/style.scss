@@ -11,12 +11,14 @@
 }
 
 .all-posts-div{
+    position: relative;
     margin: 0 auto 100px auto;
     max-width: 1440px;
 }
 
 .post-box{
-background-color: gray;
+box-shadow: 0px 2px 4px 0px rgba(0,0,0,.5);
+background-color: #b2b3b3;
 border-radius: 3px;
 border: 2px black ;
 height: 210px;
@@ -36,7 +38,9 @@ height: 210px;
     top: 8px;
     left: 16px;
     padding: 5px;
-    background-color: blueviolet;
+    &:hover{
+        cursor: pointer;
+    }
 }
 
 .post-box-image{
@@ -69,9 +73,20 @@ height: 210px;
 }
 
 .no-results{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
-    font-size: x-large;
+    text-align: center;
+    margin: 20% auto;
+    font-size: 30px;
+}
+
+
+.horizontal-post-box{
+    // style={{width:'100%', maxWidth:'850px', padding:'0.65rem', margin:'5px auto' , border:'1px solid #ccc', borderRadius:'5px', backgroundColor:'#f3f6f8', boxShadow:'0 2px 4px 0'}}
+    width: 100%;
+    max-width: 850px;
+    padding: 0.65rem;
+    margin: 5px auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fbfbfb;
+    box-shadow: 0px 2px 4px 0px rgba(0,0,0,.5);
 }

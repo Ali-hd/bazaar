@@ -33,14 +33,15 @@ const reducer = (state = initialState, action) => {
         case type.REGISTER_SUCCESS:
             return {...state, ...action.payload, status: 'registered', loading: false, error: false}
         case type.ERROR:
-            message.error(action.payload.msg);
+            message.error(action.payload.msg? action.payload.msg : action.payload == 'Unauthorized' ? 'You need to sign in' : 'error');
             console.log(action.payload)
-            return {...state, loading: false, error: true, alert: true}
+            return {...state, loading: false, error: true, alert: true, msg: action.payload.msg}
         case type.GET_POSTS_SUCCESS:
             console.log(action.payload)
-            const posts = state.posts ? { posts: state.posts.concat(action.payload.results) }  : { posts: action.payload.results }
+            const posts = state.posts && state.more_posts && action.payload.previous ? { posts: state.posts.concat(action.payload.results) }  : { posts: action.payload.results }
             return {...state, ...posts, loadingPosts: false, more_posts: action.payload.next? true: false}
         case type.SELL_POST_SUCCESS:
+            action.func()
             return {...state, ...action.payload, loading: false}
         case type.GET_USER:
             console.log('get user reducer',action.payload)

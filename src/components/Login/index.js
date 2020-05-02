@@ -26,7 +26,7 @@ const LoginPage = (props) => {
             initialValues={{ remember: true }}
             onFinish={onFinish}
          >
-         {state.alert ? (
+         {state.msg == 'Incorrect email or password' ? (
         <Alert className="login-input" style={{ marginBottom: '13px'}} message="Username, Email or Password incorrect" type="error" closable afterClose={handleClose} />
          ) : null}
             <Form.Item

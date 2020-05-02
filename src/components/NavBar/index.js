@@ -62,7 +62,9 @@ const NavBar = ({ history }) => {
     <nav className="menuBar">
       <div style={{ maxWidth: '1700px', margin: '0 auto' }}>
         <div className="logo">
-          <a href="">logo</a>
+          <Link style={{paddingTop:'13px'}} to="/">
+            <img width="100%" height="100%" alt="logo" src="https://i.imgur.com/CFZCrt4.png"/>
+          </Link>
         </div>
         <div className="menuCon">
           <div className="leftMenu">
@@ -80,13 +82,15 @@ const NavBar = ({ history }) => {
           <div className="rightMenu">
           {state.session ?
               <Menu mode="horizontal">
-                  <SubMenu title={<span>{state.decoded.username}</span>}>
+                  <SubMenu style={{marginTop:4}} title={<span>Account</span>}>
+                  <Menu.ItemGroup key="g1" title={state.decoded.username}>
                     <Menu.Item key="profile_menu">
-                    <Link to={"/user/"+state.decoded.username}>
-                    My profile
-                    </Link>
-                    </Menu.Item>
-                    <Menu.Item onClick={logout} key="setting:2">Logout</Menu.Item>
+                      <Link to={"/user/"+state.decoded.username}>
+                      My profile
+                      </Link>
+                      </Menu.Item>
+                      <Menu.Item onClick={logout} key="setting:2">Logout</Menu.Item>
+                  </Menu.ItemGroup>
                 </SubMenu>
               </Menu>
               :
@@ -117,10 +121,14 @@ const NavBar = ({ history }) => {
             {LeftMenu()}
             <Menu mode="vertical">
               <Menu.Item key="mail">
-                <a href="">Login</a>
+                    <Link to="/login">
+                    Login
+                    </Link>
               </Menu.Item>
               <Menu.Item key="app">
-                <a href="">Register</a>
+                    <Link to="/register">
+                    Register
+                    </Link>
               </Menu.Item>
             </Menu>
           </Drawer>

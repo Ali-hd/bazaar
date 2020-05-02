@@ -35,7 +35,7 @@ export const applyMiddleware = dispatch => action => {
             }))
         case types.GET_POSTS:
             console.log(action.payload)
-            return axios.get(`${API_URL}/post?page=${action.payload}&limit=16`)
+            return axios.get(`${API_URL}/post?page=${action.payload.page}&limit=16&city=${action.payload.city}&time=${action.payload.time}`)
             .then(res=>dispatch({
                 type: types.GET_POSTS_SUCCESS,
                 payload: res.data }))
@@ -47,7 +47,7 @@ export const applyMiddleware = dispatch => action => {
             return axios.post(`${API_URL}/post/create`, action.payload, { headers: { Authorization: `Bearer ${token()}` } })
             .then(res=>dispatch({
                 type: types.SELL_POST_SUCCESS,
-                payload: res.data }), console.log('sold post'))
+                payload: res.data, func: action.func }), console.log('sold post'))
             .catch(err=>dispatch({
                 type: types.ERROR,
                 payload: err.response.data
@@ -117,7 +117,7 @@ export const applyMiddleware = dispatch => action => {
                 payload: err.response.data
             }))  
         case types.SEARCH_ON_CHANGE: 
-            return axios.post(`${API_URL}/post/search`,{search: action.payload})
+            return axios.post(`${API_URL}/post/search?city=${action.payload.city}&time=${action.payload.time}`,{search: action.payload.search})
             .then(res=>dispatch({
                 type: types.SEARCH_ON_CHANGE,
                 payload: res.data }))

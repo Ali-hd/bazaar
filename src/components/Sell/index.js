@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { StoreContext } from '../../store/store'
 import { withRouter, Link, Redirect } from 'react-router-dom';
-import { Upload, message, Divider, Input, Form, Button, Select } from 'antd';
+import { Upload, message, Divider, Input, Form, Button, Select, Result } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import {API_URL} from '../../config'
 import './style.scss'
@@ -14,6 +14,7 @@ const SellPage = (props) => {
 
     const [files, setFiles] = useState([])
     const [images, setImages] = useState([])
+    const [sold, setSold] = useState(false)
 
     const cities = ['Riyadh', 'Qatif', 'Jeddah', 'Makkah', 'Medina', 'Yanbu', 'Hafr Al-Batin', 'Taif', 'Tabuk', 'Buraydah', 'Unaizah', 'Jubail', 'Jizan', 'Al Jawf', 'Hofuf', 'Gurayat', 'Dhahran', 'Bisha', 'Arar', 'Abha']
 
@@ -51,9 +52,16 @@ const SellPage = (props) => {
 
     const onFinish = values => {
         console.log(values)
+        console.log(values.description.match(/\n/g))
         let payload = values
         payload.images = images
-        actions.sellPost(payload)
+        actions.sellPost(payload, soldPost)
+    }
+
+    const soldPost = () => {
+        setImages([])
+        setFiles([])
+        setSold(!sold)
     }
 
     const showUploadList = { showPreviewIcon: false, showDownloadIcon: false, showRemoveIcon: true }
@@ -61,8 +69,9 @@ const SellPage = (props) => {
     return (
         <div className="sell-div">
             {console.log(files)}
+            {!sold ? 
             <div>
-                <Form hideRequiredMark onFinish={onFinish} layout='vertical'>
+                <Form id="sellForm" hideRequiredMark onFinish={onFinish} layout='vertical'>
                     <div>
                         <Form.Item
                             className="title-form"
@@ -75,13 +84,13 @@ const SellPage = (props) => {
                                 placeholder="Enter a title for the item you are selling" />
                         </Form.Item>
                         <Form.Item
+                        className="title-form"
                         name="location"
-                        label="location"
+                        label="Location"
                         rules={[{ required: true, message: 'Please choose your location' }]}
                         >
                         <Select
                             showSearch
-                            className="title-form"
                             placeholder="Select your location"
                             optionFilterProp="children"
                             filterOption={(input, option) =>
@@ -115,7 +124,9 @@ const SellPage = (props) => {
                             autoSize={{ minRows: 3, maxRows: 10 }}
                             placeholder="Enter your description here" />
                     </Form.Item>
-                    <Dragger style={{marginTop:'15px'}} showUploadList={showUploadList} {...settings}>
+                </Form>
+
+                <Dragger style={{marginTop:'15px'}} showUploadList={showUploadList} {...settings}>
                         <p className="ant-upload-drag-icon">
                             <InboxOutlined />
                         </p>
@@ -124,24 +135,36 @@ const SellPage = (props) => {
                             Support for a single or bulk upload. Only allowed 4 images ( jpg - png ), 2MB max per image
                     </p>
                     </Dragger>
-                    <div className="row">
                         {files.length > 0 && files.map((ele) => {
                             return ele.response && ele.response.imageUrl ?
-                                <img className="col-3 mt-2 mb-2 preview-img" key={ele.uid} src={ele.response.imageUrl} /> : null
+                            <div className="row uploaded-image-frame">
+                                <img className="uploaded-image" key={ele.uid} src={ele.response.imageUrl} />
+                            </div> : null
                         })}
-                    </div>
+                    {/* <img className="col-3 mt-2 mb-2 preview-img" key={ele.uid} src={ele.response.imageUrl} /> */}
                     <Divider />
-                    <Form.Item style={{marginTop:'15px'}}>
-                    <Button style={{ marginBottom: '5px' }} type="primary" htmlType="submit">
+
+                    <Button form="sellForm" style={{ marginBottom: '5px' }} type="primary" htmlType="submit">
                         sell now
                     </Button>
-                    </Form.Item>
-                </Form>
                 
-            </div>
-
+            </div> : 
+            <Result
+            status="success"
+            title="Successfully Listed Your Posted"
+            // subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+            extra={[
+            <Link key="home" to="/">
+              <Button type="primary" >
+                Go Home
+              </Button></Link>,
+              <Button onClick={soldPost} key="sell">Sell something else</Button>,
+            ]}
+          />}
         </div>
     )
 }
+
+
 
 export default withRouter(SellPage)

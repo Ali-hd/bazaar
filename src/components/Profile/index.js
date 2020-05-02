@@ -85,7 +85,7 @@ const ProfilePage = (props) => {
                     <img className="profile-img" width="375" height="375" src={state.user && state.user.profileImg} />
                     <div>
                     <Upload showUploadList={false} {...settings}>
-                        <p className="change-picture">change picture</p>
+                        {state.decoded && state.decoded.username === props.match.params.username ?<p className="change-picture">change picture</p> : null}
                     </Upload>
                     </div>
                 </div>
@@ -190,7 +190,7 @@ const ProfilePage = (props) => {
                     </Form.Item>
                     </Form>
                 </div> :<Button onClick={togglePassword} shape="round" style={{display:'flex', margin:'20px auto 20px auto'}}>Change password</Button>}     
-                </div>: <div>
+                </div>: state.session ? <div>
                     {!rate ? <Button onClick={toggleRateUser} block> Rate User</Button>
                      : <div>
                          <Form onFinish={submitRating}>
@@ -208,7 +208,7 @@ const ProfilePage = (props) => {
                          
                          </div>}
                         
-                    </div>}
+                    </div> : null}
            </div>
            <div className="profile-menu col-lg-9 col-md-8 col-12">
                 <div>
@@ -221,7 +221,7 @@ const ProfilePage = (props) => {
                         <AppstoreOutlined />
                             Ratings
                         </Menu.Item>
-                        {props.match.params.username === state.decoded.username && 
+                        {state.decoded && props.match.params.username === state.decoded.username && 
                         <Menu.Item className={activeTab !== 'likes' && 'modified-item'} key="likes">
                         <AppstoreOutlined />
                             Likes

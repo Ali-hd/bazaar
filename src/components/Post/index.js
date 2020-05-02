@@ -141,7 +141,7 @@ const PostPage = (props) => {
             </div>
             <div className="post-description">
                 <Divider orientation="left">Description</Divider>
-                <p>
+                <p style={{ whiteSpace: 'pre-wrap'}}>
                 { state.post && state.post.description}
                 </p>
             </div>
@@ -149,7 +149,7 @@ const PostPage = (props) => {
                 <Divider>Post information</Divider>
                 <div className="row">
                     <div className="col-4">
-                    <p>Seller: Ali hd  <MailOutlined /></p>
+                    <p>Seller: <Link to={`/user/${state.post && state.post.user.username}`}>{state.post && state.post.user.username}</Link> <MailOutlined /></p>
                     <p>Posted at: {state.post && moment(state.post.createdAt).format("MMMM Do YYYY")}</p>
                     <p>Condition: Used</p>
                     <p>Location: {state.post && state.post.location}</p>
