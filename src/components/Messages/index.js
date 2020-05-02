@@ -20,14 +20,19 @@ const MessagesPage = () => {
 
      const [chat, setChat] = useState('')
      const [conversation, setConversation] = useState([])
+     const [user, setUser] = useState('')
 
      const updateMsg = e => {
          setChat(e.target.value)
      }
 
+     const enterUser = e => {
+        setUser(e.target.value)
+    }
+
      const sendMsg = () => {
         console.log(chat)
-        socket.emit('chat', { username: 'rash', content: chat })
+        socket.emit('chat', { username: user, content: chat })
     }
 
     return(
@@ -41,6 +46,8 @@ const MessagesPage = () => {
             
             <Input onChange={updateMsg} type="primary" style={{width:'200px'}}/>
             <Button onClick={sendMsg}>Send</Button>
+            
+            <Input onChange={enterUser} type="primary" style={{width:'200px'}}/>
             </div>
         </div>
     )
