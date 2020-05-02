@@ -13,6 +13,7 @@ const Register = lazy(()=> import('./components/Register'))
 const Sell = lazy(()=>import('./components/Sell'))
 const Profile = lazy(()=>import('./components/Profile'))
 const Post = lazy(()=>import('./components/Post'))
+const Messages = lazy(()=>import('./components/Messages'))
 
 function App(){
   return (
@@ -40,6 +41,9 @@ function App(){
             </Route>
             <Route path="/post/:id" exact>
               <Post />
+            </Route>
+            <Route path="/user/:username/messages" exact>
+              <Messages />
             </Route>
         </Switch>
         </Suspense>
