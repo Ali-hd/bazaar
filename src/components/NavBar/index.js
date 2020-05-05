@@ -46,10 +46,12 @@ const NavBar = ({ history }) => {
 
   useEffect(()=>{
     actions.verifyToken()
+    state.account == null && actions.getAccount() 
   }, [])
   
   history.listen((location, action) => {
     actions.verifyToken()
+    state.account == null && actions.getAccount()
   });
 
   const logout = () => {

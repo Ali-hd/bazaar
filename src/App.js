@@ -14,6 +14,7 @@ const Sell = lazy(()=>import('./components/Sell'))
 const Profile = lazy(()=>import('./components/Profile'))
 const Post = lazy(()=>import('./components/Post'))
 const Messages = lazy(()=>import('./components/Messages'))
+const Chat = lazy(()=>import('./components/Chat'))
 
 function App(){
   return (
@@ -42,8 +43,11 @@ function App(){
             <Route path="/post/:id" exact>
               <Post />
             </Route>
-            <Route path="/user/:username/messages" exact>
+            <Route path="/messages" exact>
               <Messages />
+            </Route>
+            <Route path="/messages/:id" exact>
+              <Chat />
             </Route>
         </Switch>
         </Suspense>

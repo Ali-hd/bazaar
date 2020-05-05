@@ -1,56 +1,41 @@
-import React, { useContext, useRef, useState, useEffect } from 'react'
-import { Button, Input, message } from 'antd';
-import {API_URL} from '../../config'
-import { token } from '../../store/middleware'
-import io from 'socket.io-client'
+import React, { useContext, useState, useEffect } from 'react'
+import { Button, Input, message, List, Avatar, Divider } from 'antd';
+import { withRouter, Link } from 'react-router-dom';
+import { StoreContext } from '../../store/store'
+import moment from 'moment'
+import './style.scss'
 
-let socket = io.connect(API_URL,{
-    query: {token: token()}
-})
-
-
-const MessagesPage = () => {
+const MessagesPage = (props) => {
+    const { state, actions } = useContext(StoreContext)
 
     useEffect(() => {
-        socket.on('output', msg => {
-        console.log('socket received',msg)
-            setConversation(msg)
-      })
-     }, [])
+        state.decoded && actions.getConversations()
+    }, [])
 
-     const [chat, setChat] = useState('')
-     const [conversation, setConversation] = useState([])
-     const [user, setUser] = useState('')
-
-     const updateMsg = e => {
-         setChat(e.target.value)
-     }
-
-     const enterUser = e => {
-        setUser(e.target.value)
-    }
-
-     const sendMsg = () => {
-        console.log(chat)
-        socket.emit('chat', { username: user, content: chat })
-    }
-
-    return(
+    return (
         <div>
-            <div style={{textAlign: 'center', marginTop:'14%'}}>
-            {conversation.map(msg=>{
-                return <div key={msg._id}>
-                    <span>{msg.sender+":"+" "+ msg.content}</span>
-                    </div>
-            })}
-            
-            <Input onChange={updateMsg} type="primary" style={{width:'200px'}}/>
-            <Button onClick={sendMsg}>Send</Button>
-            
-            <Input onChange={enterUser} type="primary" style={{width:'200px'}}/>
+            {console.log(state)}
+            <div className="conv" style={{ padding: '2rem' }}>
+                <List style={{ maxWidth: '700px', padding: '0.7rem', margin: '100px auto 0 auto', border: '1px solid #ccc', borderRadius: '4px' }}>
+                    {state.conversations ? state.conversations.conversations.map(con => {
+                        return <div className="conv-box" key={con._id}>
+                            <Link to={`/messages/${con._id}`}>
+                                <List.Item style={{ margin: '0' }} key={2}>
+                                    <List.Item.Meta
+                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                        title={con.participants[0] !== state.decoded.username ? con.participants[0] : con.participants[1]}
+                                        description={moment(con.updatedAt).fromNow()}
+                                    />
+                                    {/* <p>Content</p> */}
+                                </List.Item>
+                            </Link>
+                            <Divider style={{margin:'5px 0'}}/>
+                        </div>
+                    }) : null}
+                </List>
             </div>
         </div>
     )
 }
 
-export default MessagesPage
+export default withRouter(MessagesPage)

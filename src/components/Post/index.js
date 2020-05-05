@@ -5,7 +5,7 @@ import { FundViewOutlined, EyeOutlined, LikeOutlined, MailOutlined, LikeTwoTone}
 import './style.scss'
 import moment from 'moment'
 import io from 'socket.io-client'
-import { Carousel, Divider, Comment, Avatar, Form, Button, List, Input, Statistic, Tooltip, message } from 'antd';
+import { Carousel, Divider, Comment, Avatar, Form, Button, List, Input, Statistic, Tooltip, message, Modal } from 'antd';
 import {API_URL} from '../../config'
 import { token } from '../../store/middleware'
 const { TextArea } = Input;
@@ -27,9 +27,9 @@ const PostPage = (props) => {
       })
       socket.on('output', msg => {
         console.log('socket received',msg)
-        if(Array.isArray(msg)){
-            actions.submitBid(msg)
-        }else{
+        if(Array.isArray(msg.bids) && msg._id === props.match.params.id){
+            actions.submitBid(msg.bids)
+        }else if(!Array.isArray(msg.bids) && msg._id === props.match.params.id){
             message.error(msg)
         }
     })
@@ -39,6 +39,9 @@ const PostPage = (props) => {
     const [comments, setComments] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [value, setValue] = useState('');
+    const [liked, setLiked] = useState('');
+    const [modal, setModal] = useState(false);
+    const [msg, setMsg] = useState('')
 
     const changeSlide = (i) => {
         slider.current.goTo(i)
@@ -48,8 +51,8 @@ const PostPage = (props) => {
         let commentSchema = []
         params.map(com=>{
             return commentSchema.push({
-                author: com.username,
-                avatar: com.userImg,
+                author: com.user.username,
+                avatar: com.user.profileImg,
                 content: <p>{com.description}</p>,
                 datetime: moment(com.createdAt).format("MMMM Do YYYY, h:mm:ss a")
             })
@@ -89,7 +92,7 @@ const PostPage = (props) => {
         const newComment = {
             username: state.decoded.username,
             description: value,
-            userImg: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+            userImg: state.account.profileImg,
             postId: props.match.params.id
         }
         const payload = {
@@ -110,6 +113,25 @@ const PostPage = (props) => {
         console.log(bid)
         socket.emit('bids', { bid: bid, postId: props.match.params.id })
     }
+
+    const likePost = (param) => {
+        actions.likePost(props.match.params.id)
+        setLiked(param)
+    }
+
+    const sendMsg = () => {
+        actions.startChat({username: state.post.user.username, content: msg})
+        setModal(!modal)
+    }
+
+    const showModal = () => {
+        setModal(!modal)
+    }
+
+    const updateMsg = e => {
+        setMsg(e.target.value)
+    }
+    
 
     return (
         <div style={{ maxWidth: '1600px', margin: '100px auto' }}>
@@ -149,7 +171,7 @@ const PostPage = (props) => {
                 <Divider>Post information</Divider>
                 <div className="row">
                     <div className="col-4">
-                    <p>Seller: <Link to={`/user/${state.post && state.post.user.username}`}>{state.post && state.post.user.username}</Link> <MailOutlined /></p>
+                    <p>Seller: <Link to={`/user/${state.post && state.post.user.username}`}>{state.post && state.post.user.username}</Link> <MailOutlined onClick={showModal} /></p>
                     <p>Posted at: {state.post && moment(state.post.createdAt).format("MMMM Do YYYY")}</p>
                     <p>Condition: Used</p>
                     <p>Location: {state.post && state.post.location}</p>
@@ -184,9 +206,8 @@ const PostPage = (props) => {
                         <p style={{marginBottom:'3px'}}>Views</p>
                         <EyeOutlined style={{marginBottom:'15px'}} /> {state.post && state.post.views}
                         <p style={{marginBottom:'3px'}}>Like</p>
-                        <LikeOutlined style={{cursor:'pointer'}} onClick={()=>actions.likePost(props.match.params.id)} /> {state.post && state.post.likes}
-                        {/* <Statistic className="views-stat" title="Views" value={23} prefix={<EyeOutlined />} />
-                        <Statistic className="views-stat mr-3" title="Likes" value={3} prefix={<EyeOutlined />} /> */}
+                        {state.account && state.account.liked.includes(props.match.params.id) || liked === 'like' ? <LikeTwoTone style={{cursor:'pointer'}} onClick={()=>likePost('dislike')} /> 
+                        : <LikeOutlined style={{cursor:'pointer'}} onClick={()=>likePost('like')} />}{state.post && state.post.likes}
                     </div>
                 </div>
             </div>
@@ -195,8 +216,8 @@ const PostPage = (props) => {
                 <Comment
                     avatar={
                         <Avatar
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                            alt="Han Solo"
+                            src={state.account && state.account.profileImg}
+                            alt="profile img"
                         />
                     }
                     content={
@@ -212,6 +233,23 @@ const PostPage = (props) => {
                         </div>
                     }
                 />
+            </div>
+            <div>
+            <Modal
+                title="Send Direct Message"
+                visible={modal}
+                footer={[
+                    <Button key="cancel" onClick={showModal}>
+                      Cancel
+                    </Button>,
+                    <Button key="send" type="primary" onClick={sendMsg}>
+                      Send
+                    </Button>,
+                  ]}
+                >
+                <p>to: <span style={{fontWeight:'700', fontSize:'1rem'}}>{state.post && state.post.user.username}</span></p>
+                <TextArea placeholder="type your message here" onChange={updateMsg}/>
+                </Modal>
             </div>
         </div>
     )

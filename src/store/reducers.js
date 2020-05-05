@@ -10,6 +10,7 @@ const initialState = {
     user: {
         _id: ""
     },
+    account: null,
     status: '',
     alert: null,
     loadingPosts: false,
@@ -18,7 +19,9 @@ const initialState = {
     post: null,
     checkingUsername: false,
     usernameAvailable: true,
-    more_posts: false
+    more_posts: false,
+    conversations: null,
+    conversation: null
 }
 
 const reducer = (state = initialState, action) => {
@@ -32,6 +35,9 @@ const reducer = (state = initialState, action) => {
             return {...state, ...action.payload, status: 'logged in', loading: false, error: false}
         case type.REGISTER_SUCCESS:
             return {...state, ...action.payload, status: 'registered', loading: false, error: false}
+        case type.GET_ACCOUNT:
+            console.log(action.payload)
+            return {...state, ...action.payload}
         case type.ERROR:
             message.error(action.payload.msg? action.payload.msg : action.payload == 'Unauthorized' ? 'You need to sign in' : 'error');
             console.log(action.payload)
@@ -84,6 +90,16 @@ const reducer = (state = initialState, action) => {
         case type.RATE_USER:
             action.payload.func()
             return state
+        case type.GET_CONVERSATIONS:
+            console.log(action.payload)
+            return {...state, ...action.payload}
+        case type.START_CHAT:
+            console.log(action.payload)
+            return {...state, ...action.payload}
+        case type.GET_SINGLE_CONVERSATION:
+                console.log(action.payload)
+                action.func(action.payload.conversation.messages)
+            return {...state, ...action.payload}
         default:
             return state
     }

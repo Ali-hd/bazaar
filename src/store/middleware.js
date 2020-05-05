@@ -142,6 +142,43 @@ export const applyMiddleware = dispatch => action => {
             .catch(err=>dispatch({
                 type: types.ERROR,
                 payload: err.response.data
+            }))
+        case types.GET_ACCOUNT:
+            return axios.get(`${API_URL}/auth/user`, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.GET_ACCOUNT,
+                payload: res.data }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            }))
+        case types.GET_CONVERSATIONS:
+            return axios.get(`${API_URL}/action/conversations`, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.GET_CONVERSATIONS,
+                payload: res.data }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            }))
+        case types.START_CHAT:
+            return axios.post(`${API_URL}/user/conversation`, action.payload, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.START_CHAT,
+                payload: res.data }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
+            }))
+        case types.GET_SINGLE_CONVERSATION:
+            return axios.get(`${API_URL}/action/conversation?id=${action.payload.id}`, { headers: { Authorization: `Bearer ${token()}` } })
+            .then(res=>dispatch({
+                type: types.GET_SINGLE_CONVERSATION,
+                payload: res.data,
+                func: action.payload.func }))
+            .catch(err=>dispatch({
+                type: types.ERROR,
+                payload: err.response.data
             })) 
         default: dispatch(action)
     }
