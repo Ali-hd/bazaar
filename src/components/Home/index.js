@@ -116,11 +116,11 @@ const Home = (props) => {
 
                             state.posts && state.posts.length > 0 ? state.posts.map((post) => { 
                                 return <div className="horizontal-post-box" key={post._id}>
-                                <div style={{ display:'inline-block', marginRight:'1rem', verticalAlign:'middle', width:'70%'}}>
+                                <div className="horizontal-post">
                                     <h6 style={{textOverflow:'ellipsis', wordWrap:'break-word', overflow:'hidden', whiteSpace:'nowrap', height:'1.6rem', marginBottom:'5px'}}>{post.title}</h6>
                                     <div style={{ display:'inline-block', width:'50%'}}>
-                                        <h6>{post.location}</h6>
-                                        <h6 >views: {post.views}</h6>
+                                        <p>{post.location}</p>
+                                        <p >views: {post.views}</p>
                                     </div>
                                     <div style={{display:'inline-block'}}>
                                         <p>Seller: {post.user.username}</p>

@@ -17,7 +17,7 @@ const LeftMenu = () => {
   return (
     <div>
       <Menu mode="horizontal">
-        <Menu.Item key="mail">
+        <Menu.Item key="home">
           <Link to="/">
             Home
         </Link>
@@ -32,8 +32,11 @@ const LeftMenu = () => {
           <Menu.Item key="setting:4">Option 4</Menu.Item>
         </MenuItemGroup>
       </SubMenu> */}
-        <Menu.Item key="alipay">
+        <Menu.Item key="sell">
           <Link to="/sell">Sell</Link>
+        </Menu.Item>
+        <Menu.Item key="messages">
+          <Link to="/messages">Messages</Link>
         </Menu.Item>
       </Menu>
     </div>
@@ -44,15 +47,15 @@ const NavBar = ({ history }) => {
   const { state, actions } = useContext(StoreContext)
   const [visible, setVisible] = useState(false)
 
-  useEffect(()=>{
-    actions.verifyToken()
-    state.account == null && actions.getAccount() 
+  useEffect(()=>{  
+    let ran = false
+    history.listen((location, action) => {
+      state.account == null ? actions.verifyToken('get account') : actions.verifyToken()
+      let history = true
+    });
+    !ran && state.account == null ? actions.verifyToken('get account') : actions.verifyToken()
   }, [])
-  
-  history.listen((location, action) => {
-    actions.verifyToken()
-    state.account == null && actions.getAccount()
-  });
+
 
   const logout = () => {
     actions.logout()
@@ -85,7 +88,7 @@ const NavBar = ({ history }) => {
           {state.session ?
               <Menu mode="horizontal">
                   <SubMenu style={{marginTop:4}} title={<span>Account</span>}>
-                  <Menu.ItemGroup key="g1" title={state.decoded.username}>
+                  <Menu.ItemGroup key="username" title={state.decoded.username}>
                     <Menu.Item key="profile_menu">
                       <Link to={"/user/"+state.decoded.username}>
                       My profile

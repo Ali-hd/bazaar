@@ -15,8 +15,9 @@ const MessagesPage = (props) => {
     return (
         <div>
             {console.log(state)}
-            <div className="conv" style={{ padding: '2rem' }}>
-                <List style={{ maxWidth: '700px', padding: '0.7rem', margin: '100px auto 0 auto', border: '1px solid #ccc', borderRadius: '4px' }}>
+            <div className="conv" style={{ padding: '2rem', maxWidth: '750px', margin:'100px auto' }}>
+                <h5>Your Messages:</h5>
+                <List style={{ padding: '0.7rem', border: '1px solid #ccc', borderRadius: '4px' }}>
                     {state.conversations ? state.conversations.conversations.map(con => {
                         return <div className="conv-box" key={con._id}>
                             <Link to={`/messages/${con._id}`}>

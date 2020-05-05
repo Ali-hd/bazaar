@@ -36,8 +36,11 @@ export const useActions = (state, dispatch) => ({
     },
     verifyToken: data => {
         jwt.verify(localStorage.getItem('token') || sessionStorage.getItem('token'), process.env.REACT_APP_JWT_SECRET, function (err, decoded) {
-            if (err) {  dispatch({type: types.SET_STATE, payload: {session: false, decoded: decoded}})  }
-            else {  dispatch({type: types.SET_STATE, payload: {session: true, decoded: decoded}})  }
+            if (err) { dispatch({type: types.SET_STATE, payload: {session: false, decoded: decoded }})  }
+            else {  
+                if(data == 'get account'){ dispatch({type: types.GET_ACCOUNT}) }
+                console.log('verifying token')
+                dispatch({type: types.SET_STATE, payload: {session: true, decoded: decoded}})  }
         });
     },
     getSinglePost: data => {
@@ -72,9 +75,6 @@ export const useActions = (state, dispatch) => ({
     },
     rateUser: data => {
         dispatch({type: types.RATE_USER, payload: data})
-    },
-    getAccount: data => {
-        dispatch({type: types.GET_ACCOUNT})
     },
     getConversations: data => {
         dispatch({type: types.GET_CONVERSATIONS, payload: data})

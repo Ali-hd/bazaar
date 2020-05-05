@@ -50,15 +50,16 @@ const ChatPage = (props) => {
     return(
         <div>
             {console.log(state)}
-            <div style={{textAlign: 'center', marginTop:'14%'}}>
+            <div style={{textAlign: 'center', maxWidth:'700px', margin:'100px auto 20px auto', maxHeight:'300px', overflowY: 'scroll', border:'1px solid #ccc', padding:'1rem', borderRadius:'5px'}}>
             {conversation.map(msg=>{
                 return <div key={msg._id}>
                     <span>{msg.sender+":"+" "+ msg.content}</span>
                     </div>
             })}
-            
-            <Input onChange={updateMsg} type="primary" style={{width:'200px'}}/>
-            <Button onClick={sendMsg}>Send</Button>
+            </div>
+            <div style={{textAlign:'center'}}>
+                <Input onChange={updateMsg} type="primary" style={{width:'200px'}}/>
+                <Button onClick={sendMsg}>Send</Button>
             </div>
             {/* <div style={{padding:'2rem'}}>
             <List style={{maxWidth:'700px', padding:'0.7rem', margin:'100px auto 0 auto', border:'1px solid #ccc', borderRadius:'4px'}}>
