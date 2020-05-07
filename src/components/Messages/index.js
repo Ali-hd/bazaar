@@ -1,40 +1,152 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { Button, Input, message, List, Avatar, Divider } from 'antd';
-import { withRouter, Link } from 'react-router-dom';
+import React, { useContext, useState, useEffect, useRef } from 'react'
+import { Button, Input, message, List, Avatar, Divider, Form } from 'antd';
+import { withRouter, Link, Redirect } from 'react-router-dom';
 import { StoreContext } from '../../store/store'
 import moment from 'moment'
 import './style.scss'
+import io from 'socket.io-client'
+import { token } from '../../store/middleware'
+import {API_URL} from '../../config'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
+let socket = io.connect(API_URL,{
+    query: {token: token()}
+})
 
 const MessagesPage = (props) => {
     const { state, actions } = useContext(StoreContext)
+    const [conversation, setConversation] = useState([])
+    const [room, setRoom] = useState(null)
+    const mounted = useRef()
+    const [form] = Form.useForm();
 
     useEffect(() => {
-        state.decoded && actions.getConversations()
-    }, [])
+        if(!mounted.current){
+            state.decoded && actions.getConversations()
+            mounted.current = true
+        }else{
+            console.log('refresh')
+            form.setFieldsValue({
+                content: '',
+              });
+            socket.on('output', msg => {
+                console.log('socket received',msg)
+                setConversation(msg)
+              })
+              let messageBody = document.querySelector('#messageBody');
+              messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+        }
+    }, [conversation])
+
+    const fillConversation = params => {
+        setConversation(params)
+        
+     }
+
+    const sendMsg = values => {
+        console.log('submit message')
+        let username = state.conversation.participants[0] !== state.decoded.username ? state.conversation.participants[0] : state.conversation.participants[1]
+        socket.emit('chat', { room: room, username, content: values.content })
+    }
+
+    const getConversation = (id) => {
+       socket.emit('subscribe', id);
+       setRoom(id)
+       actions.getSingleConversation({id:id, func: fillConversation})
+    }
 
     return (
         <div>
             {console.log(state)}
-            <div className="conv" style={{ padding: '2rem', maxWidth: '750px', margin:'100px auto' }}>
-                <h5>Your Messages:</h5>
-                <List style={{ padding: '0.7rem', border: '1px solid #ccc', borderRadius: '4px' }}>
-                    {state.conversations ? state.conversations.conversations.map(con => {
-                        return <div className="conv-box" key={con._id}>
-                            <Link to={`/messages/${con._id}`}>
-                                <List.Item style={{ margin: '0' }} key={2}>
-                                    <List.Item.Meta
-                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                        title={con.participants[0] !== state.decoded.username ? con.participants[0] : con.participants[1]}
-                                        description={moment(con.updatedAt).fromNow()}
-                                    />
-                                    {/* <p>Content</p> */}
-                                </List.Item>
-                            </Link>
-                            <Divider style={{margin:'5px 0'}}/>
+            <div className="messages-container">
+                <h3 className=" text-center">Messages</h3>
+                <div className="messaging">
+                    <div className="inbox_msg">
+
+                        <div className="inbox_people">
+                            <div className="headind_srch">
+                                <div className="recent_heading">
+                                    <h4>Recent</h4>
+                                </div>
+                                {/* <div className="srch_bar">
+                                    <div className="stylish-input-group">
+                                        <input type="text" className="search-bar" placeholder="Search" />
+                                        <span className="input-group-addon">
+                                            <button type="button"> <i className="fa fa-search" aria-hidden="true"></i> </button>
+                                        </span> </div>
+                                </div> */}
+                            </div>
+                        <div className="inbox_chat">
+                            {state.conversations && state.conversations.conversations.length > 0 ? state.conversations.conversations.map(con => {
+                                return <a key={con._id} onClick={()=>getConversation(con._id)}>
+                                            <div className="chat_list active_chat">
+                                                <div className="chat_people">
+                                                    <div className="chat_img"> 
+                                                        <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> 
+                                                    </div>
+                                                    <div className="chat_ib">
+                                                        <h5>{con.participants[0] !== state.decoded.username ? con.participants[0] : con.participants[1]} <span className="chat_date">{moment(con.updatedAt).fromNow()}</span></h5>
+                                                        {/* <p>Test, which is a new approach to have all solutions
+                                                                astrology under one roof.</p> */}
+                                                    </div>
+                                                </div>                                   
+                                            </div>
+                                        </a>
+                            }) : <h6 style={{ textAlign: 'center', margin: '10% auto' }}>empty..</h6>} 
+                         </div>
                         </div>
-                    }) : null}
-                </List>
+                        {room? 
+                        <div className="mesgs">
+
+                            <div className="msg_history" id="messageBody">
+                            {conversation.map(msg=>{
+                                return <div key={msg._id}>
+                                    {msg.sender==state.decoded.username? 
+                                    <div className="outgoing_msg">
+                                    <div className="sent_msg">
+                                        <p style={{minHeight:'2rem'}}>{msg.content}</p>
+                                        <span className="time_date"> {moment(msg.createdAt).fromNow()}    |    {moment(msg.createdAt).format("MMM D")}</span> </div>
+                                </div> : <div className={"incoming_msg"}>
+                                    <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                                    <div className="received_msg">
+                                        <div className="received_withd_msg">
+                                        <p style={{minHeight:'2rem'}}>{msg.content}</p>
+                                            <span className="time_date"> {moment(msg.createdAt).fromNow()}    |    {moment(msg.createdAt).format("MMM D")}</span></div>
+                                    </div>
+                                </div>
+                                }
+                                    </div> 
+                                })}
+                            </div>
+
+                            <div className="type_msg">
+                                <div className="input_msg_write">
+                                    <Form style={{ height:'32px'}} form={form} onFinish={sendMsg}>
+                                        <Form.Item validateTrigger="onSubmit" name="content" rules={[{ required: true, message: 'Please type a message' }]}>
+                                            <Input className="write_msg" placeholder="Type a message"/>
+                                        </Form.Item>  
+                                    </Form>
+                                    {/* <input type="text" className="write_msg" placeholder="Type a message" />
+                                    <button className="msg_send_btn" type="button"><i className="fa fa-paper-plane-o" aria-hidden="true"></i></button> */}
+                                </div>
+                            </div> 
+                        </div>
+                        : 
+                        <div className="empty-messages">
+                            <h5>You dont have any message selected</h5>
+                            <h5> Please select on a message </h5>
+                        </div> }
+                    </div>
+
+                </div>
+                
             </div>
+
+
+
+
+
         </div>
     )
 }

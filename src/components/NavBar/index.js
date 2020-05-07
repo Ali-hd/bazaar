@@ -2,21 +2,22 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Link, withRouter } from 'react-router-dom';
 import { StoreContext } from '../../store/store'
 import './style.scss'
-import { Menu, Layout, Button, Drawer, Input } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Menu, Button, Drawer, Input, Divider } from 'antd';
 import {
   MailOutlined,
   AppstoreOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import jwt from 'jsonwebtoken'
 const { SubMenu } = Menu;
 const MenuItemGroup = Menu.ItemGroup;
 const { Search } = Input;
 
-const LeftMenu = () => {
+const LeftMenu = postion => {
+  const { state } = useContext(StoreContext)
   return (
     <div>
-      <Menu mode="horizontal">
+      <Menu mode={postion}>
         <Menu.Item key="home">
           <Link to="/">
             Home
@@ -35,58 +36,26 @@ const LeftMenu = () => {
         <Menu.Item key="sell">
           <Link to="/sell">Sell</Link>
         </Menu.Item>
+        {state.session ?
         <Menu.Item key="messages">
           <Link to="/messages">Messages</Link>
-        </Menu.Item>
+        </Menu.Item> : null }
       </Menu>
     </div>
   )
 }
 
-const NavBar = ({ history }) => {
+const RightMenu = postion => {
   const { state, actions } = useContext(StoreContext)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(()=>{  
-    let ran = false
-    history.listen((location, action) => {
-      state.account == null ? actions.verifyToken('get account') : actions.verifyToken()
-      let history = true
-    });
-    !ran && state.account == null ? actions.verifyToken('get account') : actions.verifyToken()
-  }, [])
-
-
+  
   const logout = () => {
     actions.logout()
   }
-  
-  const showDrawer = () => { setVisible(true) }
-  const onClose = () => { setVisible(false) }
   return (
-    <nav className="menuBar">
-      <div style={{ maxWidth: '1700px', margin: '0 auto' }}>
-        <div className="logo">
-          <Link style={{paddingTop:'13px'}} to="/">
-            <img width="100%" height="100%" alt="logo" src="https://i.imgur.com/CFZCrt4.png"/>
-          </Link>
-        </div>
-        <div className="menuCon">
-          <div className="leftMenu">
-            {LeftMenu()}
-          </div>
-          {/* <div>
-          <Search
-            className="searchInput"
-            placeholder="input search text"
-            enterButton="search"
-            size="large"
-            onSearch={value => console.log(value)}
-        />
-          </div> */}
-          <div className="rightMenu">
-          {state.session ?
-              <Menu mode="horizontal">
+    <div>
+      {state.session ?
+              <Menu mode={postion}>
+                  {postion === 'horizontal' ? 
                   <SubMenu style={{marginTop:4}} title={<span>Account</span>}>
                   <Menu.ItemGroup key="username" title={state.decoded.username}>
                     <Menu.Item key="profile_menu">
@@ -96,10 +65,18 @@ const NavBar = ({ history }) => {
                       </Menu.Item>
                       <Menu.Item onClick={logout} key="setting:2">Logout</Menu.Item>
                   </Menu.ItemGroup>
-                </SubMenu>
+                </SubMenu> : 
+                <Menu.ItemGroup key="username" title={state.decoded.username}>
+                <Menu.Item key="profile_menu">
+                  <Link to={"/user/"+state.decoded.username}>
+                  My profile
+                  </Link>
+                  </Menu.Item>
+                  <Menu.Item onClick={logout} key="setting:2">Logout</Menu.Item>
+              </Menu.ItemGroup> }     
               </Menu>
               :
-              <Menu mode="horizontal">
+              <Menu mode={postion}>
                 <Menu.Item key="login">
                   <Link to="/login">
                     Login
@@ -112,34 +89,101 @@ const NavBar = ({ history }) => {
                 </Menu.Item>
               </Menu>
             }
-          </div>
-          <Button className="barsMenu" type="primary" onClick={showDrawer}>
-            <span className="barsBtn"></span>
-          </Button>
-          <Drawer
-            //   title="Basic Drawer"
-            placement="right"
-            closable={false}
-            onClose={onClose}
-            visible={visible}
-          >
-            {LeftMenu()}
-            <Menu mode="vertical">
-              <Menu.Item key="mail">
-                    <Link to="/login">
+    </div>
+  )
+}
+
+const NavBar = ({ history }) => {
+  const { state, actions } = useContext(StoreContext)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(()=>{  
+    let ran = false
+    history.listen((location, action) => {
+      state.account == null ? actions.verifyToken('get account') : actions.verifyToken()
+      onClose()
+    });
+    !ran && state.account == null ? actions.verifyToken('get account') : actions.verifyToken()
+  }, [])
+
+  
+  const showDrawer = () => { setVisible(true) }
+  const onClose = () => { setVisible(false) }
+  return (
+    <div>
+            <nav className="menuBar">
+                <div style={{ maxWidth: '1700px', margin: '0 auto' }}>
+                  <div className="logo">
+                    <Link style={{paddingTop:'13px'}} to="/">
+                      <img width="100%" height="100%" alt="logo" src="https://i.imgur.com/CFZCrt4.png"/>
+                    </Link>
+                  </div>
+                  <div className="menuCon">
+                    <div className="leftMenu">
+                      {LeftMenu('horizontal')}
+                    </div>
+                    <div className="rightMenu">
+                    {RightMenu('horizontal')}
+                    </div>
+                    <Button className="barsMenu" onClick={showDrawer}>
+                      <span className="barsBtn"></span>
+                    </Button>
+                    <Drawer
+                      //   title="Basic Drawer"
+                      placement="right"
+                      closable={false}
+                      onClose={onClose}
+                      visible={visible}
+                    >
+                      {LeftMenu('vertical')}
+                      <Menu>
+                        <Menu.Divider/>
+                      </Menu>
+                      {RightMenu('vertical')}
+                    </Drawer>
+                  </div>
+                </div>
+              </nav>
+              {/* <nav className="navbar-side">
+            <div className="nav-content-side">
+                <span className="nav-item-side">
+                  sheertiko
+                </span>
+                <span className="nav-item-side">
+                  Login
+                </span>
+                <span className="nav-item-side">
+                  Logout
+                </span>
+            </div>
+          </nav> */}
+          {/* <nav className="nav-bar">
+            <div className="nav-content">
+              <div className="left-menu">
+                    <Link className="nav-logo">bazaar</Link>
+                  <span className="nav-item">
+                    Home
+                  </span>
+                  <span className="nav-item">
+                    Sell
+                  </span>
+              </div>
+              <div className="right-menu">
+                  <span className="nav-item">
                     Login
-                    </Link>
-              </Menu.Item>
-              <Menu.Item key="app">
-                    <Link to="/register">
+                  </span>
+                  <span className="nav-item">
                     Register
-                    </Link>
-              </Menu.Item>
-            </Menu>
-          </Drawer>
-        </div>
-      </div>
-    </nav>
+                  </span>
+                  <span className="side-nav-btn">
+                    <FontAwesomeIcon icon={['fas', 'bars']} />
+                  </span>
+              </div>
+            </div>
+          </nav> */}
+          
+    </div>
+    
   )
 
 }

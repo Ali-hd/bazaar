@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { Button, Input, message, List, Avatar, Divider } from 'antd';
+import React, { useContext, useState, useEffect, useRef } from 'react'
+import { Button, Input, message, List, Avatar, Divider, Form } from 'antd';
 import {API_URL} from '../../config'
 import { withRouter, Link } from 'react-router-dom';
 import { token } from '../../store/middleware'
@@ -11,55 +11,63 @@ let socket = io.connect(API_URL,{
     query: {token: token()}
 })
 
-
 const ChatPage = (props) => {
+    const mounted = useRef()
+    const [form] = Form.useForm();
+
     const { state, actions } = useContext(StoreContext)
+    const [conversation, setConversation] = useState([])
     useEffect(() => {
-        console.log('use effect')
-        actions.getSingleConversation({id:props.match.params.id, func: fillConversation})
-        socket.open();
-        console.log('component mounted')
-        socket.emit('subscribe', props.match.params.id);
-        socket.on('output', msg => {
-        console.log('socket received',msg)
-            setConversation(msg)
-      })
-      return () => {
-        socket.close();
-      };
-     }, [])
+            if(!mounted.current){
+                actions.getSingleConversation({id:props.match.params.id, func: fillConversation})
+                mounted.current = true
+                // socket.open();
+                socket.emit('subscribe', props.match.params.id);
+            }else{
+                form.setFieldsValue({
+                    content: '',
+                  });
+                socket.on('output', msg => {
+                    console.log('socket received',msg)
+                    setConversation(msg)
+                  })
+                let messageBody = document.querySelector('#messageBody');
+                messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+            }
+    //   return () => {
+    //     socket.close();
+    //   };
+     }, [conversation])
 
-     const [chat, setChat] = useState('')
-     const [conversation, setConversation] = useState([])
 
-     const updateMsg = e => {
-         setChat(e.target.value)
-     }
-
-     const fillConversation = (params) => {
+     const fillConversation = params => {
         setConversation(params)
      }
 
-     const sendMsg = () => {
+     const sendMsg = values => {
         let username = state.conversation.participants[0] !== state.decoded.username ? state.conversation.participants[0] : state.conversation.participants[1]
-        console.log(username)
-        console.log(chat)
-        socket.emit('chat', { room: props.match.params.id, username, content: chat })
+        socket.emit('chat', { room: props.match.params.id, username, content: values.content })
     }
 
     return(
         <div>
             {console.log(state)}
-            <div style={{textAlign: 'center', maxWidth:'700px', margin:'100px auto 20px auto', maxHeight:'300px', overflowY: 'scroll', border:'1px solid #ccc', padding:'1rem', borderRadius:'5px'}}>
+            <div id="messageBody" style={{textAlign: 'center', maxWidth:'500px', margin:'100px auto 20px auto', height:'300px', overflowY: 'scroll', border:'1px solid #ccc', padding:'1rem', borderRadius:'5px'}}>
             {conversation.map(msg=>{
-                return <div key={msg._id}>
-                    <span>{msg.sender+":"+" "+ msg.content}</span>
+                return <div style={{clear:'both'}} key={msg._id}>
+                    <span style={msg.sender==state.decoded.username? {float:'left'} : {float:'right'}}>{msg.sender+":"+" "+ msg.content}</span>
                     </div>
             })}
             </div>
-            <div style={{textAlign:'center'}}>
-                <Input onChange={updateMsg} type="primary" style={{width:'200px'}}/>
-                <Button onClick={sendMsg}>Send</Button>
+            <div>
+                <Form form={form} style={{maxWidth:'250px', display:'flex', margin:'0 auto'}} onFinish={sendMsg}>
+                    <Form.Item validateTrigger="onSubmit" name="content" rules={[{ required: true, message: 'Please type a message' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button htmlType="submit">Send</Button>
+                    </Form.Item>
+                </Form>
             </div>
             {/* <div style={{padding:'2rem'}}>
             <List style={{maxWidth:'700px', padding:'0.7rem', margin:'100px auto 0 auto', border:'1px solid #ccc', borderRadius:'4px'}}>

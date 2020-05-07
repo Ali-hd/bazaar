@@ -61,7 +61,7 @@ const Home = (props) => {
                     ))}
                 </Tabs>
                 <div className="row" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                    <div className="col-9">
+                    <div className="col-lg-9 col-7">
                         <Search
                             style={{ width: '100%' }}
                             className="searchInput"
@@ -73,7 +73,7 @@ const Home = (props) => {
                             onSearch={value => console.log(value)}
                         />
                     </div>
-                    <div className="col-3">
+                    <div className="col-lg-3 col-5">
                         <Select size="default" onChange={changeTime} defaultValue="all time" style={{ width: '100%', display: 'inline-block', marginTop: 40, textAlign: 'start' }}>
                             <Option value="l-d">last 24 hrs</Option>
                             <Option value="l-w">last 7 days</Option>

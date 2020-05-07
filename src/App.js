@@ -5,7 +5,8 @@ import NavBar from './components/NavBar'
 import {StoreProvider} from './store/store'
 import ScrollTopTop from './helpers/ScrollToTop'
 import 'dotenv/config'
-
+// import your fontawesome library
+import './helpers/fontawesome'
 
 const Home = lazy(()=> import('./components/Home'))
 const Login = lazy(()=> import('./components/Login'))
@@ -46,9 +47,9 @@ function App(){
             <Route path="/messages" exact>
               <Messages />
             </Route>
-            <Route path="/messages/:id" exact>
+            {/* <Route path="/messages/:id" exact>
               <Chat />
-            </Route>
+            </Route> */}
         </Switch>
         </Suspense>
     </BrowserRouter>

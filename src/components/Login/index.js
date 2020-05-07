@@ -4,7 +4,6 @@ import { withRouter, Link, Redirect } from 'react-router-dom';
 import { Form, Input, Button, Checkbox, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import './style.scss'
-import token from '../../store/middleware'
 
 const LoginPage = (props) => {
    const { state, actions } = useContext(StoreContext)    

@@ -61,10 +61,15 @@ const reducer = (state = initialState, action) => {
             return {...state, ...action.payload}
         case type.LIKE_POST:
             let post = state.post
+            let account = state.account
             if(action.payload.msg === "liked"){
                 post.likes = post.likes + 1
-            }else if(action.payload.msg === "unliked"){ post.likes = post.likes - 1}
-            return {...state, ...post }
+                account.liked.push(action.params)
+            }else if(action.payload.msg === "unliked"){ 
+                post.likes = post.likes - 1
+                let likeIndex = account.liked.indexOf(action.params)
+                likeIndex > -1 && account.liked.splice(likeIndex, 1)}
+            return {...state, ...post, ...account }
         case type.SUBMIT_BID:
             let bidpost = state.post
             bidpost.bids = action.payload
@@ -94,6 +99,7 @@ const reducer = (state = initialState, action) => {
             console.log(action.payload)
             return {...state, ...action.payload}
         case type.START_CHAT:
+            message.success('Your message was sent!')
             console.log(action.payload)
             return {...state, ...action.payload}
         case type.GET_SINGLE_CONVERSATION:

@@ -10,7 +10,7 @@
 
 .post-preview-boxes{
     max-width: 280px;
-    margin: 0 auto;
+    margin: 3.5rem auto 0 auto;
 }
 
 .post-preview-img{
@@ -52,8 +52,7 @@
 .post-carousel-box{
     max-width: 800px;
     margin: 0 auto;
-    height: 700px;
-    margin-bottom: 20px;
+    height: 400px;
 }
 
 .post-info-box{
@@ -63,7 +62,7 @@
 }
 
 .carousel-frame{
-    height: 600px;      /* equals max image height */
+    height: 400px;      /* equals max image height */
     width: 800px;
     position: relative;
 }
@@ -96,8 +95,8 @@
 
 .ant-carousel .slick-slide {
     text-align: center;
-    height: 700px;
-    line-height: 700px;
+    height: 450px;
+    line-height: 600px;
     background: #ffffff;
     overflow: hidden;
   }

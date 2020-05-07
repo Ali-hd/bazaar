@@ -85,7 +85,8 @@ export const applyMiddleware = dispatch => action => {
             return axios.post(`${API_URL}/post/${action.payload}/like`,action.payload, { headers: { Authorization: `Bearer ${token()}` } })
             .then(res=>dispatch({
                 type: types.LIKE_POST,
-                payload: res.data }))
+                payload: res.data,
+                params: action.payload }))
             .catch(err=>dispatch({
                 type: types.ERROR,
                 payload: err.response.data

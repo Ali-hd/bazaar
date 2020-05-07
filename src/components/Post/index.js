@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState, useEffect } from 'react'
 import { StoreContext } from '../../store/store'
-import { withRouter, Link, Redirect } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { FundViewOutlined, EyeOutlined, LikeOutlined, MailOutlined, LikeTwoTone} from '@ant-design/icons';
 import './style.scss'
 import moment from 'moment'
@@ -29,8 +29,8 @@ const PostPage = (props) => {
         console.log('socket received',msg)
         if(Array.isArray(msg.bids) && msg._id === props.match.params.id){
             actions.submitBid(msg.bids)
-        }else if(!Array.isArray(msg.bids) && msg._id === props.match.params.id){
-            message.error(msg)
+        }else if(!msg.bids && msg._id === props.match.params.id){
+            message.error(msg.msg)
         }
     })
    }, [props.match.params.id])
@@ -39,7 +39,6 @@ const PostPage = (props) => {
     const [comments, setComments] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [value, setValue] = useState('');
-    const [liked, setLiked] = useState('');
     const [modal, setModal] = useState(false);
     const [msg, setMsg] = useState('')
 
@@ -114,9 +113,8 @@ const PostPage = (props) => {
         socket.emit('bids', { bid: bid, postId: props.match.params.id })
     }
 
-    const likePost = (param) => {
+    const likePost = () => {
         actions.likePost(props.match.params.id)
-        setLiked(param)
     }
 
     const sendMsg = () => {
@@ -161,6 +159,7 @@ const PostPage = (props) => {
                         })}
                 </div>
             </div>
+            <div style={{padding:'1rem'}}>
             <div className="post-description">
                 <Divider orientation="left">Description</Divider>
                 <p style={{ whiteSpace: 'pre-wrap'}}>
@@ -170,13 +169,13 @@ const PostPage = (props) => {
             <div className="post-info-box">
                 <Divider>Post information</Divider>
                 <div className="row">
-                    <div className="col-4">
+                    <div className="col-sm-4 col-xs-6">
                     <p>Seller: <Link to={`/user/${state.post && state.post.user.username}`}>{state.post && state.post.user.username}</Link> <MailOutlined onClick={showModal} /></p>
                     <p>Posted at: {state.post && moment(state.post.createdAt).format("MMMM Do YYYY")}</p>
                     <p>Condition: Used</p>
                     <p>Location: {state.post && state.post.location}</p>
                     </div>
-                    <div className="col-4">
+                    <div className="col-sm-4 col-xs-12">
                     {/* <p style={{textAlign:'center'}}>Seller: zerogravity</p>
                     <Button style={{display:'flex', margin:'0 auto'}} key="3">Message</Button> */}
                     <div style={{border:'1px solid #f0f0f0', borderRadius:'3px', height:'135px', overflowY:'scroll'}}>
@@ -202,12 +201,12 @@ const PostPage = (props) => {
                         </div>
                     </div>
                     </div>
-                    <div className="views-stat col-4 text-right">
+                    <div className="views-stat col-sm-4 col-xs-6 text-right">
                         <p style={{marginBottom:'3px'}}>Views</p>
                         <EyeOutlined style={{marginBottom:'15px'}} /> {state.post && state.post.views}
                         <p style={{marginBottom:'3px'}}>Like</p>
-                        {state.account && state.account.liked.includes(props.match.params.id) || liked === 'like' ? <LikeTwoTone style={{cursor:'pointer'}} onClick={()=>likePost('dislike')} /> 
-                        : <LikeOutlined style={{cursor:'pointer'}} onClick={()=>likePost('like')} />}{state.post && state.post.likes}
+                        {state.account && state.account.liked.includes(props.match.params.id) ? <LikeTwoTone style={{cursor:'pointer'}} onClick={likePost} /> 
+                        : <LikeOutlined style={{cursor:'pointer'}} onClick={likePost} />}{state.post && state.post.likes}
                     </div>
                 </div>
             </div>
@@ -215,10 +214,12 @@ const PostPage = (props) => {
                 {comments.length > 0 && <CommentList comments={comments} />}
                 <Comment
                     avatar={
+                        <Link to={`/user/${state.decoded && state.decoded.username}`}>
                         <Avatar
                             src={state.account && state.account.profileImg}
                             alt="profile img"
                         />
+                        </Link>
                     }
                     content={
                         <div>
@@ -233,6 +234,7 @@ const PostPage = (props) => {
                         </div>
                     }
                 />
+            </div>
             </div>
             <div>
             <Modal

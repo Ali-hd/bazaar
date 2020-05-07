@@ -48,9 +48,12 @@
   float: right;
   height: 32px !important;
   padding: 6px !important;
-  margin-top: 8px;
+  margin-top: 25px;
   display: none !important;
   background: none;
+  span{
+    margin-bottom: 5px;
+  }
 }
 .barsBtn{
   display: block;
@@ -101,5 +104,106 @@
   }
   .logo a{
     padding: 10px 20px;
+  }
+}
+
+
+// ############################
+.nav-bar{
+  height: 5rem;
+  background-color: #f8f8f5;
+  border-bottom: 1px solid #e8e8e8;
+  overflow: hidden;
+}
+
+.nav-content{
+  max-width: 1700px;
+  margin: 0 auto;
+  height: 5rem;
+  display: flex;
+}
+
+.nav-logo{
+  font-size: 2rem;
+  font-family: 'Josefin Sans', sans-serif;
+  margin-right: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.left-menu{
+  display: flex;
+  margin-left: 3rem;
+  padding: 0.4rem;
+}
+
+.nav-item{
+  display: flex;
+  font-size: 1rem;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  border-bottom: 1.5px solid transparent;
+  transition: border-bottom 200ms;
+
+  &:hover{
+    border-bottom: 1.5px solid rgb(41, 40, 40);
+    color: #1890ff;
+    cursor: pointer;
+  }
+}
+
+.side-nav-btn{
+  display: flex;
+  font-size: 1.5rem;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  &:hover{
+    cursor: pointer;
+  }
+}
+
+
+.right-menu{
+  display: flex;
+  margin-left: auto;
+  padding: 0.4rem;
+  margin-right: 2rem;
+}
+
+/////////////side
+
+.navbar-side{
+  position: fixed;
+  // right: 0;
+  background-color: blanchedalmond;
+  transition: width 200ms ease;
+  z-index: 5;
+}
+
+.nav-content-side{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 0;
+  width: 14rem;
+  height: 100vh;
+  margin-top: 5rem;
+}
+
+.nav-item-side{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 3rem;
+  padding-left: 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  &:hover{
+    background: rgb(190, 124, 25);
+    transition: background 50ms;
   }
 }
