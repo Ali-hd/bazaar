@@ -7,8 +7,18 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import {
     faMapMarkerAlt,
     faBars,
-    faArrowRight
+    faArrowRight,
+    faHome,
+    faSitemap
   } from '@fortawesome/free-solid-svg-icons';
+
+//Regular style
+import {
+    faEnvelope,
+    faStar,
+    faClone,
+    faBell
+} from '@fortawesome/free-regular-svg-icons'
 
 //brand style
 import {
@@ -25,5 +35,11 @@ library.add(
   faTwitter,
   faMapMarkerAlt,
   faBars,
-  faArrowRight
+  faArrowRight,
+  faHome,
+  faSitemap,
+  faEnvelope,
+  faStar,
+  faClone,
+  faBell
 );

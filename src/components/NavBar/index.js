@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { StoreContext } from '../../store/store'
 import './style.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Menu, Button, Drawer, Input, Divider } from 'antd';
+import { Menu, Button, Drawer, Input, Divider, notification } from 'antd';
 import {
   MailOutlined,
   AppstoreOutlined,
@@ -20,6 +20,10 @@ const LeftMenu = postion => {
       <Menu mode={postion}>
         <Menu.Item key="home">
           <Link to="/">
+            {/* <span style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', verticalAlign:'middle'}}>
+                <FontAwesomeIcon style={{fontSize:'1.3rem'}} icon={['fas', 'home']} /> 
+              <span style={{marginTop:'-7px'}}>Home</span>
+            </span> */}
             Home
         </Link>
         </Menu.Item>
@@ -34,12 +38,29 @@ const LeftMenu = postion => {
         </MenuItemGroup>
       </SubMenu> */}
         <Menu.Item key="sell">
-          <Link to="/sell">Sell</Link>
+        <Link to="/sell">
+            {/* <span style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', verticalAlign:'middle'}}>
+                <FontAwesomeIcon style={{fontSize:'1.3rem'}} icon={['fas', 'sitemap']} /> 
+              <span style={{marginTop:'-7px'}}>Sell</span>
+            </span> */}
+            Sell
+        </Link>
         </Menu.Item>
         {state.session ?
-        <Menu.Item key="messages">
-          <Link to="/messages">Messages</Link>
+        <Menu.Item key="inbox">
+          <Link to="/inbox">Inbox</Link>
         </Menu.Item> : null }
+        {state.session ?
+        <SubMenu style={{marginTop:4}} title={<span><span><FontAwesomeIcon style={{fontSize:'1.1rem'}} icon={['far', 'bell']} /></span>{state.account && state.account.notifications.length>0 ? <span className="bell-menu">+{+ state.account.notifications.length}</span> : ''}</span>}>
+              {state.account && state.account.notifications.length>0 ? state.account.notifications.map(n=>{
+                  return <Menu.Item key={n.from}>
+                  <Link to={"/inbox"}>
+                  {n.from}: {n.description.slice(0,20)}{n.description.length>20 && '..'}
+                  </Link>
+                  </Menu.Item>
+                }):<Menu.Item>no new notifications</Menu.Item>}
+            
+      </SubMenu>: null }
       </Menu>
     </div>
   )
@@ -114,7 +135,7 @@ const NavBar = ({ history }) => {
             <nav className="menuBar">
                 <div style={{ maxWidth: '1700px', margin: '0 auto' }}>
                   <div className="logo">
-                    <Link style={{paddingTop:'13px'}} to="/">
+                    <Link to="/">
                       <img width="100%" height="100%" alt="logo" src="https://i.imgur.com/CFZCrt4.png"/>
                     </Link>
                   </div>

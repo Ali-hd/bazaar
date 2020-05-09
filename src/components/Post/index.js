@@ -87,6 +87,8 @@ const PostPage = (props) => {
             return;
         }
 
+        if(!state.session){ return message.error('You need to sign in') }
+
         setSubmitting(true)
         const newComment = {
             username: state.decoded.username,
@@ -110,16 +112,19 @@ const PostPage = (props) => {
 
     const submitBid = (bid) => {
         console.log(bid)
+        if(!state.session){ return message.error('You need to sign in') }
         socket.emit('bids', { bid: bid, postId: props.match.params.id })
     }
 
     const likePost = () => {
+        if(!state.session){ return message.error('You need to sign in') }
         actions.likePost(props.match.params.id)
     }
 
     const sendMsg = () => {
+        if(!state.session){ return message.error('You need to sign in') }
         actions.startChat({username: state.post.user.username, content: msg})
-        setModal(!modal)
+        setModal(!modal)        
     }
 
     const showModal = () => {
@@ -240,6 +245,7 @@ const PostPage = (props) => {
             <Modal
                 title="Send Direct Message"
                 visible={modal}
+                onCancel={showModal}
                 footer={[
                     <Button key="cancel" onClick={showModal}>
                       Cancel

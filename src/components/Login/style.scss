@@ -1,8 +1,12 @@
 
 
 .login-form {
-    max-width: 600px;
+    max-width: 450px;
     margin: 10% auto;
+    padding: 2rem;
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 4px;
+    background-color: rgb(245, 245, 245);
   }
   .login-form-forgot {
     float: right;
@@ -17,7 +21,7 @@
   @media(max-width: 700px){
     .login-form {
         max-width: 300px;
-        margin: 10% auto;
+        margin: 30% auto;
       }
   }
 

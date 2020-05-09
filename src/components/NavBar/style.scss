@@ -13,7 +13,8 @@
 .logo a{
   display: inline-block;
   font-size: 20px;
-  padding: 19px 20px;
+  padding: 10px 20px 0 20px;
+  
   text-transform: capitalize;
 }
 .menuCon{
@@ -24,12 +25,29 @@
   padding: 0px 5px;
 }
 .menuCon .ant-menu-submenu-title{
-  padding: 10px 20px;
+  padding: 5px 10px;
 }
-.menuCon .ant-menu-item a, .menuCon .ant-menu-submenu-title span, .menuCon .ant-menu-submenu-title a{
+.menuCon .ant-menu-item a, .menuCon .ant-menu-submenu-title , .menuCon .ant-menu-submenu-title a{
   margin-top: 5px;
   font-weight: 600;
-  padding: 10px 15px;
+  padding: 5px 15px;
+}
+
+.bell-menu{
+  position: absolute;
+  top: 10px;
+  right: 3px;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 17px;
+  font-size: 10px;
+  width: 17px;
+  background: #ff4d4f;
+  color: white;
+  line-height: 4px;
 }
 
 .menuCon .ant-menu-horizontal{
@@ -48,7 +66,7 @@
   float: right;
   height: 32px !important;
   padding: 6px !important;
-  margin-top: 25px;
+  margin-top: 15px;
   display: none !important;
   background: none;
   span{
@@ -103,7 +121,7 @@
     padding: 1px 20px;
   }
   .logo a{
-    padding: 10px 20px;
+    padding: 0 20px;
   }
 }
 

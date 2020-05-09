@@ -34,6 +34,7 @@ const SellPage = (props) => {
         },
         // fileList: files,
         onChange(info) {
+            if(!state.session){ return message.error('You need to Sign in')}
             const { status } = info.file;
             if (status !== 'uploading') {
                 console.log(info)
@@ -51,6 +52,7 @@ const SellPage = (props) => {
     };
 
     const onFinish = values => {
+        if(!state.session){ return message.error('You need to Sign in')}
         console.log(values)
         console.log(values.description.match(/\n/g))
         let payload = values

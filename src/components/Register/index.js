@@ -80,7 +80,6 @@ import './style.scss'
        <div>
          {state.status == "registered" && <Redirect to="/login"/>}
           <Form className="register-form"
-                style={{maxWidth:'700px', margin: '5% auto', paddingLeft:'20px', paddingRight:'20px'}}
                     layout={'vertical'}
                     // form={form}
                     name="register"

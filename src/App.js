@@ -44,7 +44,7 @@ function App(){
             <Route path="/post/:id" exact>
               <Post />
             </Route>
-            <Route path="/messages" exact>
+            <Route path="/inbox" exact>
               <Messages />
             </Route>
             {/* <Route path="/messages/:id" exact>

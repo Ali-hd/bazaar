@@ -14,12 +14,21 @@ let socket = io.connect(API_URL,{
     query: {token: token()}
 })
 
-const MessagesPage = (props) => {
+const MessagesPage = ({history}) => {
     const { state, actions } = useContext(StoreContext)
     const [conversation, setConversation] = useState([])
     const [room, setRoom] = useState(null)
+    const [size, setSize] = useState(false)
     const mounted = useRef()
     const [form] = Form.useForm();
+    //useing ref because all values are null when react unmounts expect ref
+    const roomRef = useRef()
+
+    useEffect(() => {
+        //check when component unmounts
+        return () => {
+            if(roomRef.current){ socket.emit('leaveRoom', roomRef.current) } }
+      }, [])
 
     useEffect(() => {
         if(!mounted.current){
@@ -41,18 +50,24 @@ const MessagesPage = (props) => {
 
     const fillConversation = params => {
         setConversation(params)
-        
+     }
+    
+     const changeSize = () => {
+         setSize(!size)
      }
 
     const sendMsg = values => {
         console.log('submit message')
+        console.log(state.conversation.participants)
         let username = state.conversation.participants[0] !== state.decoded.username ? state.conversation.participants[0] : state.conversation.participants[1]
         socket.emit('chat', { room: room, username, content: values.content })
     }
 
     const getConversation = (id) => {
+       if(room){ socket.emit('leaveRoom', room) }
        socket.emit('subscribe', id);
        setRoom(id)
+       roomRef.current = id
        actions.getSingleConversation({id:id, func: fillConversation})
     }
 
@@ -64,10 +79,10 @@ const MessagesPage = (props) => {
                 <div className="messaging">
                     <div className="inbox_msg">
 
-                        <div className="inbox_people">
+                        <div className={size? 'inbox_people-min' : 'inbox_people'}>
                             <div className="headind_srch">
                                 <div className="recent_heading">
-                                    <h4>Recent</h4>
+                                    <h4 onClick={changeSize}>Recent</h4>
                                 </div>
                                 {/* <div className="srch_bar">
                                     <div className="stylish-input-group">
@@ -80,7 +95,7 @@ const MessagesPage = (props) => {
                         <div className="inbox_chat">
                             {state.conversations && state.conversations.conversations.length > 0 ? state.conversations.conversations.map(con => {
                                 return <a key={con._id} onClick={()=>getConversation(con._id)}>
-                                            <div className="chat_list active_chat">
+                                            <div className={`chat_list ${room === con._id && 'active_chat'}`}>
                                                 <div className="chat_people">
                                                     <div className="chat_img"> 
                                                         <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> 
@@ -93,11 +108,11 @@ const MessagesPage = (props) => {
                                                 </div>                                   
                                             </div>
                                         </a>
-                            }) : <h6 style={{ textAlign: 'center', margin: '10% auto' }}>empty..</h6>} 
+                            }) : <h6 style={{ textAlign: 'center', margin: '10% auto' }}>You have no messages</h6>} 
                          </div>
                         </div>
                         {room? 
-                        <div className="mesgs">
+                        <div style={size? {width:'85%'} : {width: '60%'}} className="mesgs">
 
                             <div className="msg_history" id="messageBody">
                             {conversation.map(msg=>{

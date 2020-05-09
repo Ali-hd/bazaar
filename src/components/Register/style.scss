@@ -1,4 +1,10 @@
 .register-form{
+    max-width: 500px;
+    margin: 5% auto;
+    padding: 2rem;
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 4px;
+    background-color: rgb(245, 245, 245);
     .ant-row.ant-form-item{
         margin-bottom: 10px;
     }

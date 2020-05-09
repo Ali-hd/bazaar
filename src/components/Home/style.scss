@@ -12,8 +12,17 @@
 
 .all-posts-div{
     position: relative;
-    margin: 0 auto 100px auto;
+    margin: 0 auto 30px auto;
     max-width: 1440px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: rgb(248, 248, 248);
+}
+
+.all-posts-border{
+    border: 15px solid transparent;
+    max-width: 1550px;
+    margin: 50px auto 0px auto;
 }
 
 .post-box{
@@ -33,10 +42,22 @@ height: 210px;
     }
 }
 
+//badge
 .views-box{
     position: absolute;
     top: 8px;
     left: 16px;
+    padding: 5px;
+    &:hover{
+        cursor: pointer;
+    }
+}
+
+.date-box{
+    width: 110px;
+    position: absolute;
+    top: 8px;
+    right: 16px;
     padding: 5px;
     &:hover{
         cursor: pointer;
@@ -80,22 +101,39 @@ height: 210px;
 
 
 .horizontal-post-box{
+    color: inherit;
     width: 100%;
-    max-width: 850px;
-    padding: 0.65rem;
+    max-width: 1000px;
+    // padding: 0.65rem;
     margin: 5px auto;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #fbfbfb;
     box-shadow: 0px 2px 4px 0px rgba(0,0,0,.5);
+    display: flex;
+    &:hover{
+        color: inherit;
+    }
 }
 
 .horizontal-post{
+    padding: 0.65rem;
     display: inline-block;
-    margin-right: 1rem;
+    // margin-right: 1rem;
     vertical-align: middle;
-    width: 70%;
+    width: calc(100% - 105px);
     p{
         margin-bottom: 5px;
+    }
+}
+
+.horizontal-post-img{
+    width: 105px;
+    display: inline-block;
+    text-align: left;
+    margin-right: 5px;
+    padding: 5px;
+    img{
+        box-shadow: 0 2px 3px 0;
     }
 }

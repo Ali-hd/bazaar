@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { StoreContext } from '../../store/store'
 import { withRouter, Link } from 'react-router-dom';
-import { Divider, Menu, Upload, message, Rate, Avatar, Button, Form, Input } from 'antd'
+import { Divider, Menu, Upload, message, Rate, Avatar, Button, Form, Input, Modal } from 'antd'
 import Loader from '../Loader'
 import { API_URL } from '../../config'
 import { MailOutlined, AppstoreOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
@@ -16,6 +16,9 @@ const ProfilePage = (props) => {
     const [edit, setEdit] = useState(false)
     const [passwordField, setPasswordField] = useState(false)
     const [rate, setRate] = useState(false)
+    const [msgModal, setMsgModal] = useState(false)
+    const [msg, setMsg] = useState('')
+
     useEffect(() => {
         actions.getUser({ userId: props.match.params.username })
         setActiveTab('posts')
@@ -47,7 +50,23 @@ const ProfilePage = (props) => {
     }
 
     const toggleRateUser = () => {
+        if(!state.session){ return message.error("You need to Sign in")}
         setRate(!rate)
+    }
+
+    const openMsgModal = () => {
+        if(!state.session){ return message.error("You need to Sign in")}
+        setMsgModal(!msgModal)
+    }
+
+    const updateMsg = e => {
+        setMsg(e.target.value)
+    }
+
+    const sendMsg = () => {
+        if(!state.session){ return message.error('You need to Sign in') }
+        actions.startChat({username: state.user.username, content: msg})
+        setMsgModal(!msgModal)        
     }
 
     const submitRating = values => {
@@ -191,8 +210,9 @@ const ProfilePage = (props) => {
                                     </Form.Item>
                                 </Form>
                             </div> : <Button onClick={togglePassword} shape="round" style={{ display: 'flex', margin: '20px auto 20px auto' }}>Change password</Button>}
-                    </div> : state.session ? <div>
-                        {!rate ? <Button onClick={toggleRateUser} block> Rate User</Button>
+                    </div> : <div>
+                        <Button style={{marginBottom:'10px'}} onClick={openMsgModal} block><FontAwesomeIcon icon={['far', 'envelope']} style={{marginRight:'6px'}} />Message</Button>
+                        {!rate ? <Button onClick={toggleRateUser} block><FontAwesomeIcon icon={['far', 'star']} style={{marginRight:'6px'}} /> Rate User </Button>
                             : <div>
                                 <Form onFinish={submitRating}>
                                     <Form.Item rules={[{ required: true, message: 'Please enter a rating' }]} className="mb-2" name="star">
@@ -201,25 +221,25 @@ const ProfilePage = (props) => {
                                     <Form.Item className="mb-3" name="description">
                                         <TextArea placeholder="How was your experience?" />
                                     </Form.Item>
-                                    <Form.Item>
+                                    <Form.Item style={{marginBottom:"7px"}}>
                                         <Button htmlType="submit" block>Submit</Button>
                                     </Form.Item>
                                 </Form>
-
+                                <Button onClick={toggleRateUser} block>Cancel</Button>
 
                             </div>}
 
-                    </div> : null}
+                    </div>}
             </div>
             <div className="profile-menu col-lg-9 col-md-8 col-12">
                 <div>
                     <Menu onClick={changeTab} selectedKeys={[activeTab]} mode="horizontal">
                         <Menu.Item className={activeTab !== 'posts' && 'modified-item'} key="posts">
-                            <MailOutlined />
+                        <FontAwesomeIcon icon={['far', 'clone']} style={{marginRight:'6px'}} />  
                             Posts
                         </Menu.Item>
                         <Menu.Item className={activeTab !== 'reviews' && 'modified-item'} key="reviews">
-                            <AppstoreOutlined />
+                        <FontAwesomeIcon icon={['far', 'star']} style={{marginRight:'6px'}} /> 
                             Ratings
                         </Menu.Item>
                         {state.decoded && props.match.params.username === state.decoded.username &&
@@ -275,6 +295,22 @@ const ProfilePage = (props) => {
                         }) : <h6 style={{ textAlign: 'center', marginTop: '10%' }}>Nothing here :(</h6>}
                     </div> : <Loader />}
             </div>
+            <Modal
+                title="Send Direct Message"
+                visible={msgModal}
+                onCancel={openMsgModal}
+                footer={[
+                    <Button key="cancel" onClick={openMsgModal}>
+                      Cancel
+                    </Button>,
+                    <Button key="send" type="primary" onClick={sendMsg}>
+                      Send
+                    </Button>,
+                  ]}
+                >
+                <p>to: <span style={{fontWeight:'700', fontSize:'1rem'}}>{state.user && state.user.username}</span></p>
+                <TextArea placeholder="type your message here" onChange={updateMsg}/>
+                </Modal>
         </div>
     )
 }

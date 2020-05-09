@@ -32,10 +32,12 @@ const Home = (props) => {
     const changeCity = e => {
         actions.getPosts({ page: 1, city: e, time: last })
         setCity(e)
+        setPage(1)
     }
 
     const changeTime = e => {
         setLast(e)
+        setPage(1)
         actions.getPosts({ page: 1, city: city, time: e })
     }
 
@@ -50,7 +52,6 @@ const Home = (props) => {
     return (
 
         <div>
-
             <div style={{ margin: '0 auto', maxWidth: '1000px' }} className="col-lg-10 text-center">
                 {console.log(state)}
                 <Tabs animated={false} onTabClick={changeCity} defaultActiveKey={city} tabPosition={'top'} style={{ height: 50 }}>
@@ -60,8 +61,7 @@ const Home = (props) => {
                         </TabPane>
                     ))}
                 </Tabs>
-                <div className="row" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                    <div className="col-lg-9 col-7">
+                <div style={{ maxWidth: '600px', margin: '0 auto' }}>
                         <Search
                             style={{ width: '100%' }}
                             className="searchInput"
@@ -72,27 +72,25 @@ const Home = (props) => {
                             onChange={searchOnChange}
                             onSearch={value => console.log(value)}
                         />
-                    </div>
-                    <div className="col-lg-3 col-5">
-                        <Select size="default" onChange={changeTime} defaultValue="all time" style={{ width: '100%', display: 'inline-block', marginTop: 40, textAlign: 'start' }}>
+                </div>
+            </div>
+        <div className="all-posts-border">
+            
+        <div className="row pl-3 pr-3 pt-5 pb-5 all-posts-div">
+                <span onClick={toggleShape} className="views-box"> <BarsOutlined style={{ fontSize: '30px', color: boxes ? '#1890ff' : '' }} /></span>
+                <Select className="date-box" size="default" onChange={changeTime} defaultValue="all time" style={{ display: 'inline-block', textAlign: 'start' }}>
                             <Option value="l-d">last 24 hrs</Option>
                             <Option value="l-w">last 7 days</Option>
                             <Option value="l-m">last month</Option>
                             <Option value="l-q">last 3 months</Option>
                             <Option value="a-t">All time</Option>
                         </Select>
-                    </div>
-                </div>
-            </div>
-
-            <div className="row pl-3 pr-3 pt-5 all-posts-div">
-                <span onClick={toggleShape} className="views-box"> <BarsOutlined style={{ fontSize: '30px', color: boxes ? '#1890ff' : '' }} /></span>
                 {!boxes ?
                     state.posts && state.posts.length > 0 ? state.posts.map((post) => {
                             return <div key={post._id} className="col-md-4 pt-4 col-lg-3 col-sm-6">
                                 <div className="post-box">
                                     <div className="image-box">
-                                        <Badge showZero overflowCount={999} count={post.views}>
+                                        <Badge title="views" showZero overflowCount={999} count={post.views}>
                                             <Link to={`/post/${post._id}`}>
                                                 <img className="post-box-image" alt="post img" onError={(e) => { e.target.onerror = null; e.target.src = "https://i.imgur.com/lpm3KS3.png" }} src={post.images[0]} />
                                             </Link>
@@ -115,7 +113,10 @@ const Home = (props) => {
                         }) : state.posts && state.posts.length < 1 ? <div className="no-results"> no results :( </div> : <Loader /> : 
 
                             state.posts && state.posts.length > 0 ? state.posts.map((post) => { 
-                                return <div className="horizontal-post-box" key={post._id}>
+                                return <Link to={`/post/${post._id}`} className="horizontal-post-box" key={post._id}>
+                                <div className="horizontal-post-img" >
+                                    <img width="105px" height="105px" src={post.images[0]} />
+                                </div>
                                 <div className="horizontal-post">
                                     <h6 style={{textOverflow:'ellipsis', wordWrap:'break-word', overflow:'hidden', whiteSpace:'nowrap', height:'1.6rem', marginBottom:'5px'}}>{post.title}</h6>
                                     <div style={{ display:'inline-block', width:'50%'}}>
@@ -123,18 +124,15 @@ const Home = (props) => {
                                         <p >views: {post.views}</p>
                                     </div>
                                     <div style={{display:'inline-block'}}>
-                                        <p>Seller: {post.user.username}</p>
+                                        <p>{post.user.username}</p>
                                         <p>{moment(post.createdAt).fromNow()}</p>
                                     </div>
                                 </div>
-                                <div style={{width:'25%', display:'inline-block', textAlign:'right'}}>
-                                    <img style={{boxShadow:'0 2px 4px 0'}} width="100px" height="100px" src={post.images[0]} />
-                                </div>
-                        </div> 
+                        </Link> 
                             }) : state.posts && state.posts.length < 1 ? <div className="no-results"> no results :( </div> : <Loader /> }
             </div>
-
-            {state.more_posts && state.posts.length >= 16 ? <Button loading={state.loadingPosts} onClick={showmore} style={{ margin: '100px auto 100px auto', display: 'flex', }}>show more</Button> : null}
+        </div>
+            {state.more_posts && state.posts.length >= 16 ? <Button loading={state.loadingPosts} onClick={showmore} style={{ margin: '0 auto 100px auto', display: 'flex', }}>show more</Button> : null}
 
         </div>
     )
