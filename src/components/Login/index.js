@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { StoreContext } from '../../store/store'
 import { withRouter, Link, Redirect } from 'react-router-dom';
 import { Form, Input, Button, Checkbox, Alert } from 'antd';
@@ -18,14 +18,14 @@ const LoginPage = (props) => {
 
    return (
       <div>
-         {state.status == "logged in" && <Redirect to="/"/>}
+         {state.status === "logged in" && <Redirect to="/"/>}
          <Form
             name="normal_login"
             className="login-form"
             initialValues={{ remember: true }}
             onFinish={onFinish}
          >
-         {state.msg == 'Incorrect email or password' ? (
+         {state.msg === 'Incorrect email or password' ? (
         <Alert className="login-input" style={{ marginBottom: '13px'}} message="Username, Email or Password incorrect" type="error" closable afterClose={handleClose} />
          ) : null}
             <Form.Item

@@ -34,7 +34,6 @@ export const applyMiddleware = dispatch => action => {
                 payload: err.response.data
             }))
         case types.GET_POSTS:
-            console.log(action.payload)
             return axios.get(`${API_URL}/post?page=${action.payload.page}&limit=16&city=${action.payload.city}&time=${action.payload.time}`)
             .then(res=>dispatch({
                 type: types.GET_POSTS_SUCCESS,
@@ -47,7 +46,7 @@ export const applyMiddleware = dispatch => action => {
             return axios.post(`${API_URL}/post/create`, action.payload, { headers: { Authorization: `Bearer ${token()}` } })
             .then(res=>dispatch({
                 type: types.SELL_POST_SUCCESS,
-                payload: res.data, func: action.func }), console.log('sold post'))
+                payload: res.data, func: action.func }))
             .catch(err=>dispatch({
                 type: types.ERROR,
                 payload: err.response.data
@@ -101,7 +100,6 @@ export const applyMiddleware = dispatch => action => {
                 payload: err.response.data
             })) 
         case types.CHANGE_PASSWORD:
-            console.log(action.payload)
             return axios.post(`${API_URL}/auth/${action.payload.userId}`,action.payload.values, { headers: { Authorization: `Bearer ${token()}` } })
             .then(res=>{
                 action.payload.func()

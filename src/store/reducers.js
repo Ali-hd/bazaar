@@ -1,6 +1,5 @@
 import type from './typeActions'
 import {message} from 'antd'
-import {Redirect} from 'react-router-dom'
 
 const initialState = {
     session: false,
@@ -30,27 +29,21 @@ const reducer = (state = initialState, action) => {
             return {...state, ...action.payload }
         case type.LOGIN_SUCCESS:
             action.rememberMe? localStorage.setItem("token", action.payload.token) : sessionStorage.setItem("token", action.payload.token)
-            console.log('login success')
-            console.log(action.payload)
             return {...state, ...action.payload, status: 'logged in', loading: false, error: false}
         case type.REGISTER_SUCCESS:
             return {...state, ...action.payload, status: 'registered', loading: false, error: false}
         case type.GET_ACCOUNT:
-            console.log(action.payload)
             return {...state, ...action.payload}
         case type.ERROR:
-            message.error(action.payload.msg? action.payload.msg : action.payload == 'Unauthorized' ? 'You need to sign in' : 'error');
-            console.log(action.payload)
+            message.error(action.payload.msg? action.payload.msg : action.payload === 'Unauthorized' ? 'You need to sign in' : 'error');
             return {...state, loading: false, error: true, alert: true, msg: action.payload.msg}
         case type.GET_POSTS_SUCCESS:
-            console.log(action.payload)
             const posts = state.posts && state.more_posts && action.payload.previous ? { posts: state.posts.concat(action.payload.results) }  : { posts: action.payload.results }
             return {...state, ...posts, loadingPosts: false, more_posts: action.payload.next? true: false}
         case type.SELL_POST_SUCCESS:
             action.func()
             return {...state, ...action.payload, loading: false}
         case type.GET_USER:
-            console.log('get user reducer',action.payload)
             let user = {...state.user, ...action.payload.user} 
             return {...state, user, loadingUserPage: false}
         case type.GET_SINGLE_POST:
@@ -85,7 +78,6 @@ const reducer = (state = initialState, action) => {
         case type.SEARCH_ON_CHANGE:
             let updatePosts = state.posts 
             updatePosts = action.payload.results
-            console.log(updatePosts)
             return {...state, ...{posts: updatePosts}}
         case type.CHECK_USERNAME:
             let available
@@ -96,14 +88,11 @@ const reducer = (state = initialState, action) => {
             action.payload.func()
             return state
         case type.GET_CONVERSATIONS:
-            console.log(action.payload)
             return {...state, ...action.payload}
         case type.START_CHAT:
             message.success('Your message was sent!')
-            console.log(action.payload)
             return {...state, ...action.payload}
         case type.GET_SINGLE_CONVERSATION:
-                console.log(action.payload)
                 action.func(action.payload.conversation.messages)
             return {...state, ...action.payload}
         default:

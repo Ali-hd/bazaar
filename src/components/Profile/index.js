@@ -22,7 +22,6 @@ const ProfilePage = (props) => {
     useEffect(() => {
         actions.getUser({ userId: props.match.params.username })
         setActiveTab('posts')
-        console.log(props)
     }, [props.match.params.username])
 
     const toggleEdit = () => {
@@ -90,7 +89,6 @@ const ProfilePage = (props) => {
             const { status } = info.file;
             if (status === 'done') {
                 actions.editProfilePic({ userId: props.match.params.username, profileImg: info.file.response.imageUrl })
-                console.log(info)
             } else if (status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
             }
@@ -99,7 +97,6 @@ const ProfilePage = (props) => {
 
     return (
         <div className="row" style={{ maxWidth: '1500px', margin: '100px auto' }}>
-            {console.log(state)}
             <div className="col-lg-3 col-md-4 col-12">
                 <div className="user-profile-box">
                     <img className="profile-img" width="375" height="375" src={state.user && state.user.profileImg} />

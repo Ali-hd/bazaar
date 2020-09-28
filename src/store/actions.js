@@ -30,7 +30,6 @@ export const useActions = (state, dispatch) => ({
         dispatch({type: types.GET_POSTS, payload: data})
     },
     sellPost: (data, func) => {
-        console.log(func)
         dispatch({type: types.SET_STATE, payload: {loading: true}})
         dispatch({type: types.SELL_POST, payload: data, func: func})
     },
@@ -38,13 +37,11 @@ export const useActions = (state, dispatch) => ({
         jwt.verify(localStorage.getItem('token') || sessionStorage.getItem('token'), process.env.REACT_APP_JWT_SECRET, function (err, decoded) {
             if (err) { dispatch({type: types.SET_STATE, payload: {session: false, decoded: decoded }})  }
             else {  
-                if(data == 'get account'){ dispatch({type: types.GET_ACCOUNT}) }
-                console.log('verifying token')
+                if(data === 'get account'){ dispatch({type: types.GET_ACCOUNT}) }
                 dispatch({type: types.SET_STATE, payload: {session: true, decoded: decoded}})  }
         });
     },
     getSinglePost: data => {
-        console.log(data)
         dispatch({type: types.GET_SINGLE_POST, payload: data})
     },
     postComment: data => {
@@ -60,7 +57,6 @@ export const useActions = (state, dispatch) => ({
         dispatch({type: types.EDIT_PROFILE_PICTURE, payload: data})
     },
     changePassword: data => {
-        console.log(data)
         dispatch({type: types.CHANGE_PASSWORD, payload: data})
     },
     editProfile: data => {

@@ -3,15 +3,10 @@ import { Link, withRouter } from 'react-router-dom';
 import { StoreContext } from '../../store/store'
 import './style.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Menu, Button, Drawer, Input, Divider, notification } from 'antd';
-import {
-  MailOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { Menu, Button, Drawer, Input} from 'antd';
 const { SubMenu } = Menu;
-const MenuItemGroup = Menu.ItemGroup;
-const { Search } = Input;
+// const MenuItemGroup = Menu.ItemGroup;
+// const { Search } = Input;
 
 const LeftMenu = postion => {
   const { state } = useContext(StoreContext)

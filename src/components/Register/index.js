@@ -1,47 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { StoreContext } from '../../store/store'
-import { Form,Input,Tooltip,Cascader,Select,Row,Col,Checkbox,Button,AutoComplete} from 'antd';
+import { Form,Input,Tooltip,Select,Checkbox,Button} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { withRouter, Link, Redirect } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import './style.scss'
   
   const { Option } = Select;
-  const AutoCompleteOption = AutoComplete.Option;
-
-  const residences = [
-    {
-      value: 'zhejiang',
-      label: 'Zhejiang',
-      children: [
-        {
-          value: 'hangzhou',
-          label: 'Hangzhou',
-          children: [
-            {
-              value: 'xihu',
-              label: 'West Lake',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      value: 'jiangsu',
-      label: 'Jiangsu',
-      children: [
-        {
-          value: 'nanjing',
-          label: 'Nanjing',
-          children: [
-            {
-              value: 'zhonghuamen',
-              label: 'Zhong Hua Men',
-            },
-          ],
-        },
-      ],
-    },
-  ];
 
   const prefixSelector = (
     <Form.Item name="prefix" noStyle>
@@ -58,30 +22,23 @@ import './style.scss'
 
   const RegisterPage = (props) => {
     const { state, actions } = useContext(StoreContext)
-          
-    // const [error, setError] = useState(state.error)
- 
+           
     const onFinish = values => {
       if(state.usernameAvailable)
        actions.registerUser(values)
-       console.log('Received values of form: ', values);
     };
 
     const checkUsername = e => {
       if(e.target.value.length>0)
       actions.checkUsername(e.target.value)
     }
- 
-    // const handleClose = () => {
-    //    actions.userActions({type: 'alert close'})
-    // }
+
  
     return (
        <div>
-         {state.status == "registered" && <Redirect to="/login"/>}
+         {state.status === "registered" && <Redirect to="/login"/>}
           <Form className="register-form"
                     layout={'vertical'}
-                    // form={form}
                     name="register"
                     onFinish={onFinish}
                     initialValues={{
@@ -170,20 +127,6 @@ import './style.scss'
                         <Input.Password />
                     </Form.Item>
 
-                    {/* <Form.Item
-                        name="residence"
-                        label="Habitual Residence"
-                        rules={[
-                        {
-                            type: 'array',
-                            required: true,
-                            message: 'Please select your habitual residence!',
-                        },
-                        ]}
-                    >
-                        <Cascader options={residences} />
-                    </Form.Item> */}
-
                     <Form.Item
                         name="phoneNumber"
                         label="Phone Number"
@@ -202,28 +145,6 @@ import './style.scss'
                         />
                     </Form.Item>
 
-                    {/* <Form.Item label="Captcha" extra="We must make sure that your are a human.">
-                        <Row gutter={8}>
-                        <Col span={12}>
-                            <Form.Item
-                            name="captcha"
-                            noStyle
-                            rules={[
-                                {
-                                required: true,
-                                message: 'Please input the captcha you got!',
-                                },
-                            ]}
-                            >
-                            <Input />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Button>Get captcha</Button>
-                        </Col>
-                        </Row>
-                    </Form.Item> */}
-
                     <Form.Item
                         name="agreement"
                         valuePropName="checked"
@@ -235,7 +156,7 @@ import './style.scss'
                         ]}
                     >
                         <Checkbox>
-                        I have read the <a href="">agreement</a>
+                        I have read the <a href="#">agreement</a>
                         </Checkbox>
                     </Form.Item>
                     <Form.Item>

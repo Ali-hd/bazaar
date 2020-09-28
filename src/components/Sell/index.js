@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { StoreContext } from '../../store/store'
-import { withRouter, Link, Redirect } from 'react-router-dom';
+import { withRouter, Link} from 'react-router-dom';
 import { Upload, message, Divider, Input, Form, Button, Select, Result } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import {API_URL} from '../../config'
@@ -37,14 +37,12 @@ const SellPage = (props) => {
             if(!state.session){ return message.error('You need to Sign in')}
             const { status } = info.file;
             if (status !== 'uploading') {
-                console.log(info)
                 message.success(`${info.file.name} file uploaded successfully.`)
             }
             if (status === 'done') {
                 message.success(`${info.file.name} file uploaded successfully.`)
                 setImages([...images, info.file.response.imageUrl])
                 setFiles([...files, info.file])
-                console.log(info)
             } else if (status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
             }
@@ -53,8 +51,6 @@ const SellPage = (props) => {
 
     const onFinish = values => {
         if(!state.session){ return message.error('You need to Sign in')}
-        console.log(values)
-        console.log(values.description.match(/\n/g))
         let payload = values
         payload.images = images
         actions.sellPost(payload, soldPost)
@@ -70,7 +66,6 @@ const SellPage = (props) => {
 
     return (
         <div className="sell-div">
-            {console.log(files)}
             {!sold ? 
             <div>
                 <Form id="sellForm" hideRequiredMark onFinish={onFinish} layout='vertical'>
@@ -140,7 +135,7 @@ const SellPage = (props) => {
                         {files.length > 0 && files.map((ele) => {
                             return ele.response && ele.response.imageUrl ?
                             <div className="row uploaded-image-frame">
-                                <img className="uploaded-image" key={ele.uid} src={ele.response.imageUrl} />
+                                <img alt="uploaded" className="uploaded-image" key={ele.uid} src={ele.response.imageUrl} />
                             </div> : null
                         })}
                     {/* <img className="col-3 mt-2 mb-2 preview-img" key={ele.uid} src={ele.response.imageUrl} /> */}

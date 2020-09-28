@@ -25,7 +25,8 @@ import {
     faGithubAlt,
     faGoogle,
     faFacebook,
-    faTwitter
+    faTwitter,
+    faGithub
   } from '@fortawesome/free-brands-svg-icons';
 
 library.add(
@@ -41,5 +42,6 @@ library.add(
   faEnvelope,
   faStar,
   faClone,
-  faBell
+  faBell,
+  faGithub
 );

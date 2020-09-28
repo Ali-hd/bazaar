@@ -1,8 +1,10 @@
 import React, { useContext, useRef, useState, useEffect } from 'react'
 import { StoreContext } from '../../store/store'
 import { withRouter, Link } from 'react-router-dom';
-import { FundViewOutlined, EyeOutlined, LikeOutlined, MailOutlined, LikeTwoTone} from '@ant-design/icons';
+import { EyeOutlined, LikeOutlined, MailOutlined, LikeTwoTone} from '@ant-design/icons';
 import './style.scss'
+import Lightbox from "react-image-lightbox";
+import "react-image-lightbox/style.css";
 import moment from 'moment'
 import io from 'socket.io-client'
 import { Carousel, Divider, Comment, Avatar, Form, Button, List, Input, Statistic, Tooltip, message, Modal } from 'antd';
@@ -11,7 +13,6 @@ import { token } from '../../store/middleware'
 const { TextArea } = Input;
 const { Search } = Input
 
-console.log(token())
 let socket = io.connect(API_URL,{
     query: {token: token()}
 })
@@ -26,7 +27,6 @@ const PostPage = (props) => {
           func: fillComments
       })
       socket.on('output', msg => {
-        console.log('socket received',msg)
         if(Array.isArray(msg.bids) && msg._id === props.match.params.id){
             actions.submitBid(msg.bids)
         }else if(!msg.bids && msg._id === props.match.params.id){
@@ -40,7 +40,9 @@ const PostPage = (props) => {
     const [submitting, setSubmitting] = useState(false);
     const [value, setValue] = useState('');
     const [modal, setModal] = useState(false);
-    const [msg, setMsg] = useState('')
+    const [msg, setMsg] = useState('');
+    const [photoIndex, setPhotoIndex] = useState(0);
+    const [photoOpen, setPhotoOpen] = useState(false);
 
     const changeSlide = (i) => {
         slider.current.goTo(i)
@@ -111,7 +113,6 @@ const PostPage = (props) => {
     const slider = useRef();
 
     const submitBid = (bid) => {
-        console.log(bid)
         if(!state.session){ return message.error('You need to sign in') }
         socket.emit('bids', { bid: bid, postId: props.match.params.id })
     }
@@ -134,30 +135,52 @@ const PostPage = (props) => {
     const updateMsg = e => {
         setMsg(e.target.value)
     }
-    
 
+    const handlePhotoClick = (index) => {
+        setPhotoIndex(index)
+        setPhotoOpen(true)
+    }
+
+    if(photoOpen){
+        document.body.style.overflow = 'hidden';
+    }else{
+        document.body.style.overflow = 'unset';
+    }
+    
+    const images = state.post ? state.post.images : null
     return (
         <div style={{ maxWidth: '1600px', margin: '100px auto' }}>
-            {console.log(state)}
             <div className="post-title">
                 <p>{state.post && state.post.title}</p>
             </div>
+            {photoOpen && (
+                <Lightbox
+                    mainSrc={images[photoIndex]}
+                    nextSrc={images[(photoIndex + 1) % images.length]}
+                    prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+                    onCloseRequest={() => setPhotoOpen(false)}
+                    onMovePrevRequest={() => setPhotoIndex((photoIndex + images.length - 1) % images.length)
+                    }
+                    onMoveNextRequest={() => setPhotoIndex((photoIndex + 1) % images.length)
+                    }
+                />
+                )}
             <div className="post-images-box">
                 <div className="post-carousel-box">
                     {state.post ? <Carousel dots={true}
                         ref={ref => {
                             slider.current = ref;
                         }}>
-                        {state.post.images.map(img=>{
+                        {images.map((img, index)=>{
                             return <div className="carousel-frame" key={img}>
-                                    <img className="carousel-img" src={img} />
+                                    <img onClick={()=>handlePhotoClick(index)} className="carousel-img" src={img} />
                             </div>
                         })}
                     </Carousel> : null
                     }
                 </div>
                 <div className="post-preview-boxes row">
-                {state.post && state.post.images.map((img,index)=>{
+                {state.post && images.length > 1 && images.map((img,index)=>{
                             return <div key={img} onClick={() => changeSlide(index)} className="post-preview-img col-md-2-5">
                             <img width="100%" height="100%" src={img} />
                         </div>

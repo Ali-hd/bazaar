@@ -1,13 +1,12 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
-import { Button, Input, message, List, Avatar, Divider, Form } from 'antd';
-import { withRouter, Link, Redirect } from 'react-router-dom';
+import {Input, Form } from 'antd';
+import { withRouter} from 'react-router-dom';
 import { StoreContext } from '../../store/store'
 import moment from 'moment'
 import './style.scss'
 import io from 'socket.io-client'
 import { token } from '../../store/middleware'
 import {API_URL} from '../../config'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 let socket = io.connect(API_URL,{
@@ -35,12 +34,10 @@ const MessagesPage = ({history}) => {
             state.decoded && actions.getConversations()
             mounted.current = true
         }else{
-            console.log('refresh')
             form.setFieldsValue({
                 content: '',
               });
             socket.on('output', msg => {
-                console.log('socket received',msg)
                 setConversation(msg)
               })
               let messageBody = document.querySelector('#messageBody');
@@ -57,8 +54,6 @@ const MessagesPage = ({history}) => {
      }
 
     const sendMsg = values => {
-        console.log('submit message')
-        console.log(state.conversation.participants)
         let username = state.conversation.participants[0] !== state.decoded.username ? state.conversation.participants[0] : state.conversation.participants[1]
         socket.emit('chat', { room: room, username, content: values.content })
     }
@@ -73,7 +68,6 @@ const MessagesPage = ({history}) => {
 
     return (
         <div>
-            {console.log(state)}
             <div className="messages-container">
                 <h3 className=" text-center">Messages</h3>
                 <div className="messaging">

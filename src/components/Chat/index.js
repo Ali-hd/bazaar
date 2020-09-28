@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
-import { Button, Input, message, List, Avatar, Divider, Form } from 'antd';
+import { Button, Input, Form } from 'antd';
 import {API_URL} from '../../config'
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter} from 'react-router-dom';
 import { token } from '../../store/middleware'
 import { StoreContext } from '../../store/store'
-import moment from 'moment'
+// import moment from 'moment'
 import io from 'socket.io-client'
 
 let socket = io.connect(API_URL,{
@@ -28,7 +28,6 @@ const ChatPage = (props) => {
                     content: '',
                   });
                 socket.on('output', msg => {
-                    console.log('socket received',msg)
                     setConversation(msg)
                   })
                 let messageBody = document.querySelector('#messageBody');
@@ -51,11 +50,10 @@ const ChatPage = (props) => {
 
     return(
         <div>
-            {console.log(state)}
             <div id="messageBody" style={{textAlign: 'center', maxWidth:'500px', margin:'100px auto 20px auto', height:'300px', overflowY: 'scroll', border:'1px solid #ccc', padding:'1rem', borderRadius:'5px'}}>
             {conversation.map(msg=>{
                 return <div style={{clear:'both'}} key={msg._id}>
-                    <span style={msg.sender==state.decoded.username? {float:'left'} : {float:'right'}}>{msg.sender+":"+" "+ msg.content}</span>
+                    <span style={msg.sender === state.decoded.username? {float:'left'} : {float:'right'}}>{msg.sender+": "+ msg.content}</span>
                     </div>
             })}
             </div>
